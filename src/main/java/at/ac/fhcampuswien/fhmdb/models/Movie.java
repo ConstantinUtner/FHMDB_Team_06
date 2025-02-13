@@ -6,11 +6,12 @@ import java.util.List;
 public class Movie {
     private String title;
     private String description;
-    // TODO add more properties here
+    private List<Genre> genres;
 
-    public Movie(String title, String description) {
+    public Movie(String title, String description, List<Genre> genres) {
         this.title = title;
         this.description = description;
+        this.genres = genres;
     }
 
     public String getTitle() {
@@ -19,6 +20,10 @@ public class Movie {
 
     public String getDescription() {
         return description;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
     }
 
     public static List<Movie> initializeMovies(){
