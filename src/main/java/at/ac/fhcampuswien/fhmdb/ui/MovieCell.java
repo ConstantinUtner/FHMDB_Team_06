@@ -12,7 +12,8 @@ import javafx.scene.paint.Color;
 public class MovieCell extends ListCell<Movie> {
     private final Label title = new Label();
     private final Label detail = new Label();
-    private final VBox layout = new VBox(title, detail);
+    private final Label genre = new Label();
+    private final VBox layout = new VBox(title, detail, genre);
 
     @Override
     protected void updateItem(Movie movie, boolean empty) {
@@ -27,6 +28,15 @@ public class MovieCell extends ListCell<Movie> {
                     movie.getDescription() != null
                             ? movie.getDescription()
                             : "No description available"
+            );
+            String genreText = "";
+            for (int i = 0; i < movie.getGenres().size(); i++) {
+                genreText += movie.getGenres().get(i).toString();
+                   /* if (i == movie.getGenres().size() - 1) {
+                        System.out.println(", ");
+                    }*/
+            }
+            genre.setText(
             );
 
 
