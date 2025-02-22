@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.ui;
 
+import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -8,6 +9,8 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+
+import java.util.StringJoiner;
 
 public class MovieCell extends ListCell<Movie> {
     private final Label title = new Label();
@@ -29,16 +32,20 @@ public class MovieCell extends ListCell<Movie> {
                             ? movie.getDescription()
                             : "No description available"
             );
-            String genreText = "";
-            for (int i = 0; i < movie.getGenres().size(); i++) {
-                genreText += movie.getGenres().get(i).toString();
-                   /* if (i == movie.getGenres().size() - 1) {
-                        System.out.println(", ");
-                    }*/
-            }
-            genre.setText(
-            );
 
+            // adds Genres of a Movie to the MovieCell
+            if (movie.getGenres().isEmpty()) {
+                genre.setText("");
+            } else {
+                StringJoiner joiner = new StringJoiner(", ");
+                for (Genre genre : movie.getGenres()) {
+                    joiner.add(genre.toString());
+                }
+                genre.setText(joiner.toString());
+            }
+
+            // genre text style
+            genre.getStyleClass().add("genre-text");
 
             // color scheme
             title.getStyleClass().add("text-yellow");
