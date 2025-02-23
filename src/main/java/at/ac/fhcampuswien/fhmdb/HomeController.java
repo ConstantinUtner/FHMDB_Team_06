@@ -74,22 +74,25 @@ public class HomeController implements Initializable {
         });
     }
 
+    // Help method for filter method
+    private static boolean isMatchingSearchText(String searchText, String origin) {
+        return searchText == null || searchText.isEmpty() || origin.toLowerCase().contains(searchText.toLowerCase());
+    }
 
     public List<Movie> filter(String searchText, Genre genre) {
-
-        if ((searchText == null || searchText.isEmpty()) && genre == null) {
-            return allMovies;
-        }
 
         List<Movie> filteredMovies = new ArrayList<>();
 
         for (Movie movie : allMovies) {
-            boolean titleMatchesSearchText = searchText == null || searchText.isEmpty() || movie.getTitle().toLowerCase().contains(searchText.toLowerCase());
-            boolean descriptionMatchesSearchText = searchText == null || searchText.isEmpty() || movie.getDescription().toLowerCase().contains(searchText.toLowerCase());
             boolean genreMatchesGenre = genre == null || movie.getGenres().contains(genre);
 
-            if ((titleMatchesSearchText || descriptionMatchesSearchText) && genreMatchesGenre) {
-                filteredMovies.add(movie);
+            if (genreMatchesGenre) {
+                boolean titleMatchesSearchText = isMatchingSearchText(searchText, movie.getTitle()) ;
+                boolean descriptionMatchesSearchText = isMatchingSearchText(searchText, movie.getDescription());
+
+                if (titleMatchesSearchText || descriptionMatchesSearchText) {
+                    filteredMovies.add(movie);
+                }
             }
         }
 
