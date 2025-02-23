@@ -76,10 +76,19 @@ public class HomeController implements Initializable {
 
 
     public List<Movie> filter(String searchText, Genre genre) {
+
+        if ((searchText == null || searchText.isEmpty()) && genre == null) {
+            return allMovies;
+        }
+
         List<Movie> filteredMovies = new ArrayList<>();
 
         for (Movie movie : allMovies) {
-            if(movie.getGenres().contains(genre)) {
+            boolean titleMatchesSearchText = searchText == null || searchText.isEmpty() || movie.getTitle().toLowerCase().contains(searchText.toLowerCase());
+            boolean descriptionMatchesSearchText = searchText == null || searchText.isEmpty() || movie.getDescription().toLowerCase().contains(searchText.toLowerCase());
+            boolean genreMatchesGenre = genre == null || movie.getGenres().contains(genre);
+
+            if ((titleMatchesSearchText || descriptionMatchesSearchText) && genreMatchesGenre) {
                 filteredMovies.add(movie);
             }
         }
