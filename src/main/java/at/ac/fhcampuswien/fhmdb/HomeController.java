@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import java.util.Comparator;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class HomeController implements Initializable {
     public List<Movie> allMovies = Movie.initializeMovies();
 
     ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
-    boolean ascending = true;
+    private boolean ascending = true;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -77,9 +78,11 @@ public class HomeController implements Initializable {
     void sortMovies() {
         if (observableMovies.isEmpty()) return;
 
-        observableMovies.sort((m1, m2) -> ascending
-                ? m1.getTitle().compareToIgnoreCase(m2.getTitle())
-                : m2.getTitle().compareToIgnoreCase(m1.getTitle()));
+        if (ascending) {
+            FXCollections.sort(observableMovies);
+        } else {
+            FXCollections.sort(observableMovies, Comparator.reverseOrder());
+        }
 
         ascending = !ascending;
     }
