@@ -36,8 +36,8 @@ public class MovieCell extends ListCell<Movie> {
                         System.out.println(", ");
                     }*/
             }
-            genre.setText(
-            );
+            /*genre.setText(
+            );*/
 
 
             // color scheme

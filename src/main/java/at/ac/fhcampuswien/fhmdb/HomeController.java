@@ -35,7 +35,8 @@ public class HomeController implements Initializable {
 
     public List<Movie> allMovies = Movie.initializeMovies();
 
-    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    boolean ascending = true;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -62,22 +63,24 @@ public class HomeController implements Initializable {
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
 
-        // Sort button example:
-        sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
-                // TODO sort observableMovies ascending
-                sortBtn.setText("Sort (desc)");
-            } else {
-                // TODO sort observableMovies descending
-                sortBtn.setText("Sort (asc)");
-            }
-        });
-    }
 
+        sortBtn.setOnAction(actionEvent -> sortMovies());
+    }
 
     public List<Movie> filter(String searchText, Genre genre) {
         ArrayList<Movie> list = new ArrayList<>();
         list.add(allMovies.get(1));
         return list;
+    }
+
+    @FXML
+    void sortMovies() {
+        if (observableMovies.isEmpty()) return;
+
+        observableMovies.sort((m1, m2) -> ascending
+                ? m1.getTitle().compareToIgnoreCase(m2.getTitle())
+                : m2.getTitle().compareToIgnoreCase(m1.getTitle()));
+
+        ascending = !ascending;
     }
 }
