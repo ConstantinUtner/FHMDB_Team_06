@@ -233,4 +233,17 @@ class HomeControllerTest {
         List<Movie> actualWithSearchTextAndGenre = homeController.getShownMovies();
         assertTrue(actualWithSearchTextAndGenre.isEmpty());
     }
+
+    @Test
+    public void shuffle_randomizes_movie_list() {
+        // GIVEN
+        List<Movie> beforeShuffle = homeController.getShownMovies();
+
+        // WHEN
+        homeController.shuffleMovies();
+
+        // THEN
+        assertNotEquals(beforeShuffle, homeController.getShownMovies());
+    }
+
 }

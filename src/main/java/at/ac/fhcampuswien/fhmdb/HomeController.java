@@ -35,7 +35,7 @@ public class HomeController implements Initializable {
     public JFXButton sortBtn;
 
     @FXML
-    private JFXButton shuffleBtn;
+    public JFXButton shuffleBtn;
 
     @FXML
     public JFXButton clearBtn;
@@ -134,7 +134,7 @@ public class HomeController implements Initializable {
         observableMovies.setAll(allMovies);
     }
 
-    private void shuffleMovies() {
+    public void shuffleMovies() {
         FXCollections.shuffle(observableMovies);
     }
 
