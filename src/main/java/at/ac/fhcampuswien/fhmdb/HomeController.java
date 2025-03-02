@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import java.util.Comparator;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,11 +36,13 @@ public class HomeController implements Initializable {
 
     public List<Movie> allMovies = Movie.initializeMovies();
 
-    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    private boolean ascending = true;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
+        sortMovies();
 
         // initialize UI stuff
         movieListView.setItems(observableMovies);   // set data of observable list to list view
@@ -57,23 +60,18 @@ public class HomeController implements Initializable {
                 genre = Genre.values()[idx];
             }
             observableMovies.setAll(filter(searchText, genre));
+            sortMovies()
+        });
+      
+        searchBtn.setOnAction(actionEvent -> {
+            sortMovies(ascending);
+            ascending = !ascending;
         });
 
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
-
-        // Sort button example:
-        sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
-                // TODO sort observableMovies ascending
-                sortBtn.setText("Sort (desc)");
-            } else {
-                // TODO sort observableMovies descending
-                sortBtn.setText("Sort (asc)");
-            }
-        });
     }
-
+  
     // Help method for filter method
     private static boolean isMatchingSearchText(String searchText, String origin) {
         return searchText == null || searchText.isEmpty() || origin.toLowerCase().contains(searchText.toLowerCase());
@@ -97,5 +95,15 @@ public class HomeController implements Initializable {
         }
 
         return filteredMovies;
+    }
+
+    public void sortMovies(boolean ascending) {
+        if (observableMovies.isEmpty()) return;
+
+        if (ascending) {
+            FXCollections.sort(observableMovies);
+        } else {
+            FXCollections.sort(observableMovies, Comparator.reverseOrder());
+        }
     }
 }

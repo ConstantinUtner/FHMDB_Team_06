@@ -13,7 +13,7 @@ class HomeControllerTest {
     private HomeController homeController;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         homeController = new HomeController();
 
         // GIVEN: Replace allMovies with test list
@@ -22,17 +22,59 @@ class HomeControllerTest {
                 new Movie("Interstellar", "A team of researchers travels through a wormhole in the universe in search of new worlds to ensure the survival of humanity.", List.of(Genre.SCIENCE_FICTION, Genre.ACTION, Genre.DRAMA)),
                 new Movie ("Saw", "Two strangers wake up in a room with no memory of how they got there, only to discover they are pawns in the deadly game of a notorious serial killer.", List.of(Genre.HORROR,Genre.MYSTERY))
         );
+        homeController.observableMovies.addAll(homeController.allMovies);
     }
 
     @AfterEach
-    void tearDown() {
+    public void tearDown() {
         homeController = null;
+    }
+  
+    @Test
+    public void sortMoviesAscending() {
+        homeController.ascending = true;
+        homeController.sortMovies();
+
+        assertEquals("A Silent Voice", homeController.observableMovies.get(0).getTitle());
+        assertEquals("Hamilton", homeController.observableMovies.get(1).getTitle());
+        assertEquals("Interstellar", homeController.observableMovies.get(2).getTitle());
+    }
+
+    @Test
+    public void sortMoviesDescending() {
+        homeController.ascending = false;
+        homeController.sortMovies();
+
+        assertEquals("WALL·E", homeController.observableMovies.get(0).getTitle());
+        assertEquals("Twilight", homeController.observableMovies.get(1).getTitle());
+        assertEquals("Saw", homeController.observableMovies.get(2).getTitle());
+    }
+
+    @Test
+    public void sortingMovies() {
+        // ascending
+        homeController.ascending = true;
+        homeController.sortMovies();
+        assertEquals("A Silent Voice", homeController.observableMovies.get(0).getTitle());
+
+        // descending
+        homeController.sortMovies();
+        assertEquals("WALL·E", homeController.observableMovies.get(0).getTitle());
+    }
+
+    @Test
+    public void sortMoviesOnEmptyList() {
+        // list stays empty when sorted empty
+        homeController.observableMovies.clear();
+        homeController.sortMovies();
+
+        assertTrue(homeController.observableMovies.isEmpty());
     }
 
     // Tests for search text filter
 
     @Test
-    void filterMovies_bySearchtext() {
+    public void filterMovies_bySearchtext() {
         // WHEN
         List<Movie> actual = homeController.filter("Interstellar", null);
 
@@ -43,7 +85,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void filterMovies_byPartialSearchtext() {
+    public void filterMovies_byPartialSearchtext() {
         // WHEN
         List<Movie> actual = homeController.filter("Interst", null);
 
@@ -54,7 +96,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void filterMovies_bySearchtext_ignore_uppercase() {
+    public void filterMovies_bySearchtext_ignore_uppercase() {
         // WHEN
         List<Movie> actual = homeController.filter("InTeRsTeLlAr", null);
 
@@ -65,7 +107,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void filter_searches_search_text_by_description() {
+    public void filter_searches_search_text_by_description() {
         // WHEN
         List<Movie> actual = homeController.filter("of researchers travels", null);
 
@@ -76,7 +118,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void filter_searchText_does_not_exist_in_title_or_description() {
+    public void filter_searchText_does_not_exist_in_title_or_description() {
         // WHEN
         List<Movie> actual = homeController.filter("XYZ", null);
 
@@ -89,7 +131,7 @@ class HomeControllerTest {
     // Tests for genre filter
 
     @Test
-    void filterMovies_byGenre() {
+    public void filterMovies_byGenre() {
         // WHEN
         List<Movie> actual = homeController.filter("", Genre.DRAMA);
 
@@ -102,7 +144,7 @@ class HomeControllerTest {
     // Tests for combination of search text and genre
 
     @Test
-    void filterMovies_bySearchtext_and_genre() {
+    public void filterMovies_bySearchtext_and_genre() {
         // WHEN
         List<Movie> actual = homeController.filter("Interstellar", Genre.ACTION);
 
@@ -113,7 +155,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void filter_returns_emptyList_when_no_movie_matches_title_and_genre() {
+    public void filter_returns_emptyList_when_no_movie_matches_title_and_genre() {
         // WHEN
         List<Movie> actual = homeController.filter("Interstellar", Genre.MYSTERY);
 
@@ -124,7 +166,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void filter_combination_of_non_existing_searchText_and_existing_genre() {
+    public void filter_combination_of_non_existing_searchText_and_existing_genre() {
         // WHEN
         List<Movie> actual = homeController.filter("XYZ", Genre.DRAMA);
 
@@ -137,7 +179,7 @@ class HomeControllerTest {
     // Tests for edge cases
 
     @Test
-    void filter_isEmpty() {
+    public void filter_isEmpty() {
         // WHEN
         List<Movie> actual = homeController.filter("", null);
 
@@ -148,7 +190,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void filter_bySearchText_isNull() {
+    public void filter_bySearchText_isNull() {
         // WHEN
         List<Movie> actual = homeController.filter(null, null);
 
