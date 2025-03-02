@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -32,6 +33,10 @@ public class HomeController implements Initializable {
 
     @FXML
     public JFXButton sortBtn;
+    private boolean isAscending;
+
+    @FXML
+    public JFXButton clearBtn;
 
     public List<Movie> allMovies = Movie.initializeMovies();
 
@@ -39,16 +44,17 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        observableMovies.addAll(allMovies);         // add dummy data to observable list
+        observableMovies.addAll(sort(allMovies,true)); // add dummy data to observable list
+        isAscending = true;
 
         // initialize UI stuff
         movieListView.setItems(observableMovies);   // set data of observable list to list view
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
-        // TODO add genre filter items with genreComboBox.getItems().addAll(...)
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setPromptText("Filter by Genre");
         searchBtn.setOnAction(actionEvent -> {
+            clearBtn.setVisible(true);
             String searchText = searchField.getText();
 
             int idx = genreComboBox.getSelectionModel().getSelectedIndex();
@@ -56,22 +62,41 @@ public class HomeController implements Initializable {
             if (idx >= 0) {
                 genre = Genre.values()[idx];
             }
-            observableMovies.setAll(filter(searchText, genre));
+            else if(searchText.isEmpty()){
+                clearBtn.setVisible(false);
+            }
+            observableMovies.setAll(sort(filter(searchText, genre), isAscending));
         });
 
-        // TODO add event handlers to buttons and call the regarding methods
-        // either set event handlers in the fxml file (onAction) or add them here
+        // Clear Button
+        clearBtn.setOnAction(actionEvent -> {
+            observableMovies.setAll(sort(allMovies, isAscending));
+            genreComboBox.getSelectionModel().clearSelection();
+            searchField.clear();
+            clearBtn.setVisible(false);
+        });
 
-        // Sort button example:
+        // Sort button:
         sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
-                // TODO sort observableMovies ascending
+            if(!isAscending) {
+                isAscending = true;
                 sortBtn.setText("Sort (desc)");
             } else {
-                // TODO sort observableMovies descending
+                isAscending = false;
                 sortBtn.setText("Sort (asc)");
             }
+            observableMovies.setAll(sort(observableMovies, isAscending));
         });
+    }
+
+    // Sort observableMovies:
+    public List<Movie> sort(List<Movie> movieList, boolean isAscending) {
+        List<Movie> sortedList = new ArrayList<>(movieList);
+        Collections.sort(sortedList);
+        if(!isAscending) {
+            Collections.reverse(sortedList);
+        }
+        return sortedList;
     }
 
     // Help method for filter method

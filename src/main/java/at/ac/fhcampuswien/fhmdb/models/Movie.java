@@ -2,7 +2,7 @@ package at.ac.fhcampuswien.fhmdb.models;
 
 import java.util.List;
 
-public class Movie {
+public class Movie implements Comparable<Movie> {
     private String title;
     private String description;
     private List<Genre> genres;
@@ -23,6 +23,11 @@ public class Movie {
 
     public List<Genre> getGenres() {
         return genres;
+    }
+
+    @Override
+    public int compareTo(Movie o) {
+        return this.getTitle().compareTo(o.getTitle());
     }
 
     public static List<Movie> initializeMovies(){
