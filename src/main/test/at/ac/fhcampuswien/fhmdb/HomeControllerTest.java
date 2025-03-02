@@ -5,33 +5,33 @@ import at.ac.fhcampuswien.fhmdb.models.Movie;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HomeControllerTest {
     private HomeController homeController;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         homeController = new HomeController();
+
+        // GIVEN: Replace allMovies with test list
         homeController.allMovies = List.of(
                 new Movie("A Silent Voice", "A young man is ostracized by his classmates after bullying a deaf girl so severely that she eventually moves away. Years later, he sets out on a journey to seek forgiveness.", List.of(Genre.ANIMATION, Genre.DRAMA, Genre.ROMANCE)),
                 new Movie("Interstellar", "A team of researchers travels through a wormhole in the universe in search of new worlds to ensure the survival of humanity.", List.of(Genre.SCIENCE_FICTION, Genre.ACTION, Genre.DRAMA)),
-                new Movie("WALL·E", "In the distant future, a small waste-collecting robot accidentally embarks on a journey into space—one that ultimately determines the fate of humanity.", List.of(Genre.ANIMATION, Genre.ROMANCE, Genre.FAMILY)),
-                new Movie("Planet Earth", "Emmy-winning, 11 episodes, five years in production—the most expensive nature documentary series ever commissioned by the BBC and the first to be filmed in high definition.", List.of(Genre.DOCUMENTARY, Genre.FAMILY)),
-                new Movie("Hamilton", "A filmed version of the Broadway musical Hamilton by Lin-Manuel Miranda, telling the story of American founding father Alexander Hamilton—born and raised as an orphan in the Caribbean.", List.of(Genre.MUSICAL, Genre.HISTORY)),
-                new Movie ("Saw", "Two strangers wake up in a room with no memory of how they got there, only to discover they are pawns in the deadly game of a notorious serial killer.", List.of(Genre.HORROR,Genre.MYSTERY)),
-                new Movie("Manitou's Shoe", "The story of two best friends, Apache chief Abahachi and cowboy Ranger, set in the Wild West.", List.of(Genre.COMEDY)),
-                new Movie("Twilight", "When Bella Swan moves to a small town in the Pacific Northwest, she falls in love with Edward Cullen, a mysterious classmate who turns out to be a 108-year-old vampire.", List.of(Genre.DRAMA, Genre.FANTASY))
+                new Movie ("Saw", "Two strangers wake up in a room with no memory of how they got there, only to discover they are pawns in the deadly game of a notorious serial killer.", List.of(Genre.HORROR,Genre.MYSTERY))
         );
         homeController.observableMovies.addAll(homeController.allMovies);
     }
 
+    @AfterEach
+    public void tearDown() {
+        homeController = null;
+    }
+  
     @Test
-    void sortMoviesAscending() {
+    public void sortMoviesAscending() {
         homeController.ascending = true;
         homeController.sortMovies();
 
@@ -41,7 +41,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void sortMoviesDescending() {
+    public void sortMoviesDescending() {
         homeController.ascending = false;
         homeController.sortMovies();
 
@@ -51,7 +51,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void sortingMovies() {
+    public void sortingMovies() {
         // ascending
         homeController.ascending = true;
         homeController.sortMovies();
@@ -63,7 +63,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void sortMoviesOnEmptyList() {
+    public void sortMoviesOnEmptyList() {
         // list stays empty when sorted empty
         homeController.observableMovies.clear();
         homeController.sortMovies();
@@ -71,8 +71,150 @@ class HomeControllerTest {
         assertTrue(homeController.observableMovies.isEmpty());
     }
 
-    @AfterEach
-    void tearDown() {
-        homeController = null;
+    // Tests for search text filter
+
+    @Test
+    public void filterMovies_bySearchtext() {
+        // WHEN
+        List<Movie> actual = homeController.filter("Interstellar", null);
+
+        // THEN
+        List<Movie> expected = List.of(homeController.allMovies.get(1));
+        assertEquals(1, actual.size());
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    public void filterMovies_byPartialSearchtext() {
+        // WHEN
+        List<Movie> actual = homeController.filter("Interst", null);
+
+        // THEN
+        List<Movie> expected = List.of(homeController.allMovies.get(1));
+        assertEquals(1, actual.size());
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    public void filterMovies_bySearchtext_ignore_uppercase() {
+        // WHEN
+        List<Movie> actual = homeController.filter("InTeRsTeLlAr", null);
+
+        // THEN
+        List<Movie> expected = List.of(homeController.allMovies.get(1));
+        assertEquals(1, actual.size());
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    public void filter_searches_search_text_by_description() {
+        // WHEN
+        List<Movie> actual = homeController.filter("of researchers travels", null);
+
+        // THEN
+        List<Movie> expected = List.of(homeController.allMovies.get(1));
+        assertEquals(1, actual.size());
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    public void filter_searchText_does_not_exist_in_title_or_description() {
+        // WHEN
+        List<Movie> actual = homeController.filter("XYZ", null);
+
+        // THEN
+        List<Movie> expected = List.of();
+        assertEquals(0, actual.size());
+        assertIterableEquals(expected, actual);
+    }
+
+    // Tests for genre filter
+
+    @Test
+    public void filterMovies_byGenre() {
+        // WHEN
+        List<Movie> actual = homeController.filter("", Genre.DRAMA);
+
+        // THEN
+        List<Movie> expected = List.of(homeController.allMovies.get(0), homeController.allMovies.get(1));
+        assertEquals(2, actual.size());
+        assertIterableEquals(expected, actual);
+    }
+
+    // Tests for combination of search text and genre
+
+    @Test
+    public void filterMovies_bySearchtext_and_genre() {
+        // WHEN
+        List<Movie> actual = homeController.filter("Interstellar", Genre.ACTION);
+
+        // THEN
+        List<Movie> expected = List.of(homeController.allMovies.get(1));
+        assertEquals(1, actual.size());
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    public void filter_returns_emptyList_when_no_movie_matches_title_and_genre() {
+        // WHEN
+        List<Movie> actual = homeController.filter("Interstellar", Genre.MYSTERY);
+
+        // THEN
+        List<Movie> expected = List.of();
+        assertEquals(0, actual.size());
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    public void filter_combination_of_non_existing_searchText_and_existing_genre() {
+        // WHEN
+        List<Movie> actual = homeController.filter("XYZ", Genre.DRAMA);
+
+        // THEN
+        List<Movie> expected = List.of();
+        assertEquals(0, actual.size());
+        assertIterableEquals(expected, actual);
+    }
+
+    // Tests for edge cases
+
+    @Test
+    public void filter_isEmpty() {
+        // WHEN
+        List<Movie> actual = homeController.filter("", null);
+
+        // THEN
+        List<Movie> expected = homeController.allMovies;
+        assertEquals(3, actual.size());
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    public void filter_bySearchText_isNull() {
+        // WHEN
+        List<Movie> actual = homeController.filter(null, null);
+
+        // THEN
+        List<Movie> expected = homeController.allMovies;
+        assertEquals(3, actual.size());
+        assertIterableEquals(expected, actual);
+    }
+
+    @Test
+    public void test_filter_with_empty_dataSource() {
+        // GIVEN: Replace allMovies with empty list
+        homeController.allMovies = List.of();
+
+        // WHEN
+        List<Movie> actualWithoutSearchTextAndGenre = homeController.filter("", null);
+        List<Movie> actualWithSearchTextOnly = homeController.filter("Interstellar", null);
+        List<Movie> actualWithGenreOnly = homeController.filter("", Genre.DRAMA);
+        List<Movie> actualWithSearchTextAndGenre = homeController.filter("Interstellar", Genre.DRAMA);
+
+        // THEN
+        assertTrue(actualWithoutSearchTextAndGenre.isEmpty());
+        assertTrue(actualWithSearchTextOnly.isEmpty());
+        assertTrue(actualWithGenreOnly.isEmpty());
+        assertTrue(actualWithSearchTextAndGenre.isEmpty());
     }
 }
