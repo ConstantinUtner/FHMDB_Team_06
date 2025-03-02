@@ -33,6 +33,7 @@
          <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0" promptText="Search FHMDb" />
          <JFXComboBox fx:id="genreComboBox" focusColor="#f5c518" styleClass="filter-combo-box" stylesheets="@styles.css" />
          <JFXButton fx:id="searchBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Filter" />
+         <JFXButton fx:id="shuffleBtn" text="Shuffle" style="-fx-background-color: #454545; -fx-text-fill: white;" />
          <JFXButton fx:id="clearBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Clear" visible="false"/>
       </children>
       <VBox.margin>
