@@ -36,17 +36,17 @@ class HomeControllerTest {
         homeController.sortMovies(true);
 
         assertEquals("A Silent Voice", homeController.getShownMovies().get(0).getTitle());
-        assertEquals("Hamilton", homeController.getShownMovies().get(1).getTitle());
-        assertEquals("Interstellar", homeController.getShownMovies().get(2).getTitle());
+        assertEquals("Interstellar", homeController.getShownMovies().get(1).getTitle());
+        assertEquals("Saw", homeController.getShownMovies().get(2).getTitle());
     }
 
     @Test
     public void sortMoviesDescending() {
         homeController.sortMovies(false);
 
-        assertEquals("WALL·E", homeController.getShownMovies().get(0).getTitle());
-        assertEquals("Twilight", homeController.getShownMovies().get(1).getTitle());
-        assertEquals("Saw", homeController.getShownMovies().get(2).getTitle());
+        assertEquals("Saw", homeController.getShownMovies().get(0).getTitle());
+        assertEquals("Interstellar", homeController.getShownMovies().get(1).getTitle());
+        assertEquals("A Silent Voice", homeController.getShownMovies().get(2).getTitle());
     }
 
     @Test
@@ -57,7 +57,7 @@ class HomeControllerTest {
 
         // descending
         homeController.sortMovies(false);
-        assertEquals("WALL·E", homeController.getShownMovies().get(0).getTitle());
+        assertEquals("Saw", homeController.getShownMovies().get(0).getTitle());
     }
 
     @Test
