@@ -1,3 +1,6 @@
+.root {
+    -fx-font-family: "Arial";
+}
 
 .background-yellow {
     -fx-background-color: #f5c518;
@@ -37,4 +40,9 @@
 .filter-combo-box {
     -fx-background-color: white;
     -fx-text-fill: #ffffff;
+}
+
+.genre-text {
+    -fx-text-fill: #ffffff;
+    -fx-font-style: italic;
 }

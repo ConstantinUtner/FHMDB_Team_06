@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import java.util.Comparator;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,51 +34,104 @@ public class HomeController implements Initializable {
     @FXML
     public JFXButton sortBtn;
 
+    @FXML
+    public JFXButton clearBtn;
+
     public List<Movie> allMovies = Movie.initializeMovies();
 
-    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    private ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    private boolean ascending = true;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
+        sortMovies(ascending);
 
         // initialize UI stuff
         movieListView.setItems(observableMovies);   // set data of observable list to list view
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
-        // TODO add genre filter items with genreComboBox.getItems().addAll(...)
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setPromptText("Filter by Genre");
+
         searchBtn.setOnAction(actionEvent -> {
             String searchText = searchField.getText();
-
             int idx = genreComboBox.getSelectionModel().getSelectedIndex();
             Genre genre = null;
             if (idx >= 0) {
                 genre = Genre.values()[idx];
             }
-            observableMovies.setAll(filter(searchText, genre));
+            filterMovies(searchText, genre);
+            sortMovies(ascending);
+
+            if (observableMovies.size() != allMovies.size()) {
+                clearBtn.setVisible(true);
+            }
+            else {
+                clearBtn.setVisible(false);
+            }
+
         });
-
-        // TODO add event handlers to buttons and call the regarding methods
-        // either set event handlers in the fxml file (onAction) or add them here
-
-        // Sort button example:
+      
         sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
-                // TODO sort observableMovies ascending
-                sortBtn.setText("Sort (desc)");
-            } else {
-                // TODO sort observableMovies descending
+            ascending = !ascending;
+            sortMovies(ascending);
+            if (ascending) {
                 sortBtn.setText("Sort (asc)");
             }
+            else {
+                sortBtn.setText("Sort (desc)");
+            }
+        });
+
+        clearBtn.setOnAction(actionEvent -> {
+            searchField.clear();
+            genreComboBox.getSelectionModel().clearSelection();
+            refreshMovies();
+            sortMovies(ascending);
+            clearBtn.setVisible(false);
         });
     }
+  
+    // Help method for filter method
+    private static boolean isMatchingSearchText(String searchText, String origin) {
+        return searchText == null || searchText.isEmpty() || origin.toLowerCase().contains(searchText.toLowerCase());
+    }
 
+    public void filterMovies(String searchText, Genre genre) {
+        List<Movie> filteredMovies = new ArrayList<>();
 
-    public List<Movie> filter(String searchText, Genre genre) {
-        ArrayList<Movie> list = new ArrayList<>();
-        list.add(allMovies.get(1));
-        return list;
+        for (Movie movie : allMovies) {
+            boolean genreMatchesGenre = genre == null || movie.getGenres().contains(genre);
+
+            if (genreMatchesGenre) {
+                boolean titleMatchesSearchText = isMatchingSearchText(searchText, movie.getTitle()) ;
+                boolean descriptionMatchesSearchText = isMatchingSearchText(searchText, movie.getDescription());
+
+                if (titleMatchesSearchText || descriptionMatchesSearchText) {
+                    filteredMovies.add(movie);
+                }
+            }
+        }
+        observableMovies.setAll(filteredMovies);
+    }
+
+    public void sortMovies(boolean ascending) {
+        if (observableMovies.isEmpty())
+            return;
+
+        if (ascending) {
+            FXCollections.sort(observableMovies);
+        } else {
+            FXCollections.sort(observableMovies, Comparator.reverseOrder());
+        }
+    }
+
+    public void refreshMovies() {
+        observableMovies.setAll(allMovies);
+    }
+
+    public List<Movie> getShownMovies(){
+        return new ArrayList<>(observableMovies);
     }
 }
