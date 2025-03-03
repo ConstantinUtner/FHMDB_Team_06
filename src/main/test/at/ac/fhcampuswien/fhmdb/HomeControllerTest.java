@@ -53,7 +53,7 @@ class HomeControllerTest {
     }
 
     @Test
-    public void sorting_movies_both() {
+    public void sort_movies_both_ways() {
         // ascending
         homeController.sortMovies(true);
         assertEquals("A Silent Voice", homeController.getShownMovies().get(0).getTitle());
@@ -64,7 +64,7 @@ class HomeControllerTest {
     }
 
     @Test
-    public void sortMovies_on_emptyList() {
+    public void sort_on_empty_list() {
         // list stays empty when sorted empty
         homeController.allMovies = List.of();
         homeController.refreshMovies();
@@ -77,7 +77,7 @@ class HomeControllerTest {
     // Tests for search text filter
 
     @Test
-    public void filterMovies_bySearchtext() {
+    public void filter_by_searchtext() {
         // WHEN
         homeController.filterMovies("Interstellar", null);
         List<Movie> actual = homeController.getShownMovies();
@@ -89,7 +89,7 @@ class HomeControllerTest {
     }
 
     @Test
-    public void filterMovies_byPartialSearchtext() {
+    public void filter_by_partial_searchtext() {
         // WHEN
         homeController.filterMovies("Interst", null);
         List<Movie> actual = homeController.getShownMovies();
@@ -101,7 +101,7 @@ class HomeControllerTest {
     }
 
     @Test
-    public void filterMovies_bySearchtext_ignore_uppercase() {
+    public void filter_by_searchtext_ignore_uppercase() {
         // WHEN
         homeController.filterMovies("InTeRsTeLlAr", null);
         List<Movie> actual = homeController.getShownMovies();
@@ -139,7 +139,7 @@ class HomeControllerTest {
     // Tests for genre filter
 
     @Test
-    public void filterMovies_byGenre() {
+    public void filter_by_genre() {
         // WHEN
         homeController.filterMovies("", Genre.DRAMA);
         List<Movie> actual = homeController.getShownMovies();
@@ -153,7 +153,7 @@ class HomeControllerTest {
     // Tests for combination of search text and genre
 
     @Test
-    public void filterMovies_by_searchtext_and_genre() {
+    public void filter_by_searchtext_and_genre() {
         // WHEN
         homeController.filterMovies("Interstellar", Genre.ACTION);
         List<Movie> actual = homeController.getShownMovies();
@@ -244,7 +244,7 @@ class HomeControllerTest {
             "Nonexistent, 0",
             "'', 3"
     })
-    public void filterMovies_finds_correct_number_of_Movies(String searchText, int expectedCount) {
+    public void filter_finds_correct_number_of_Movies(String searchText, int expectedCount) {
         homeController.filterMovies(searchText, null);
         List<Movie> actualMovies = homeController.getShownMovies();
         assertEquals(expectedCount, actualMovies.size());
