@@ -35,7 +35,7 @@ class HomeControllerTest {
     }
 
     @Test
-    public void sortMoviesAscending() {
+    public void sort_movies_ascending() {
         homeController.sortMovies(true);
 
         assertEquals("A Silent Voice", homeController.getShownMovies().get(0).getTitle());
@@ -44,7 +44,7 @@ class HomeControllerTest {
     }
 
     @Test
-    public void sortMoviesDescending() {
+    public void sort_movies_descending() {
         homeController.sortMovies(false);
 
         assertEquals("Saw", homeController.getShownMovies().get(0).getTitle());
@@ -53,7 +53,7 @@ class HomeControllerTest {
     }
 
     @Test
-    public void sortingMovies() {
+    public void sorting_movies_both() {
         // ascending
         homeController.sortMovies(true);
         assertEquals("A Silent Voice", homeController.getShownMovies().get(0).getTitle());
@@ -64,7 +64,7 @@ class HomeControllerTest {
     }
 
     @Test
-    public void sortMoviesOnEmptyList() {
+    public void sortMovies_on_emptyList() {
         // list stays empty when sorted empty
         homeController.allMovies = List.of();
         homeController.refreshMovies();
