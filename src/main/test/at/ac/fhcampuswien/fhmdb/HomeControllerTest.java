@@ -153,7 +153,7 @@ class HomeControllerTest {
     // Tests for combination of search text and genre
 
     @Test
-    public void filterMovies_bySearchtext_and_genre() {
+    public void filterMovies_by_searchtext_and_genre() {
         // WHEN
         homeController.filterMovies("Interstellar", Genre.ACTION);
         List<Movie> actual = homeController.getShownMovies();
@@ -203,7 +203,7 @@ class HomeControllerTest {
     }
 
     @Test
-    public void filter_bySearchText_isNull() {
+    public void filter_by_searchText_isNull() {
         // WHEN
         homeController.filterMovies(null, null);
         List<Movie> actual = homeController.getShownMovies();
@@ -244,7 +244,7 @@ class HomeControllerTest {
             "Nonexistent, 0",
             "'', 3"
     })
-    public void filter_findsCorrectNumberOfMovies(String searchText, int expectedCount) {
+    public void filterMovies_finds_correct_number_of_Movies(String searchText, int expectedCount) {
         homeController.filterMovies(searchText, null);
         List<Movie> actualMovies = homeController.getShownMovies();
         assertEquals(expectedCount, actualMovies.size());
