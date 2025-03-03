@@ -5,6 +5,9 @@ import at.ac.fhcampuswien.fhmdb.models.Movie;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
@@ -30,7 +33,7 @@ class HomeControllerTest {
     public void tearDown() {
         homeController = null;
     }
-  
+
     @Test
     public void sortMoviesAscending() {
         homeController.sortMovies(true);
@@ -237,13 +240,14 @@ class HomeControllerTest {
     @ParameterizedTest
     @CsvSource({
             "Interstellar, 1",
-            "Action, 2",
+            "St, 3",
             "Nonexistent, 0",
             "'', 3"
     })
-    public void search_findsCorrectNumberOfMovies(String searchText, int expectedCount) {
+    public void filter_findsCorrectNumberOfMovies(String searchText, int expectedCount) {
         homeController.filterMovies(searchText, null);
         List<Movie> actualMovies = homeController.getShownMovies();
         assertEquals(expectedCount, actualMovies.size());
     }
+
 }
