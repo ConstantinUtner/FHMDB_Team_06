@@ -244,7 +244,7 @@ class HomeControllerTest {
             "Nonexistent, 0",
             "'', 3"
     })
-    public void filter_finds_correct_number_of_Movies(String searchText, int expectedCount) {
+    public void filter_finds_correct_number_of_movies(String searchText, int expectedCount) {
         homeController.filterMovies(searchText, null);
         List<Movie> actualMovies = homeController.getShownMovies();
         assertEquals(expectedCount, actualMovies.size());
