@@ -54,25 +54,10 @@ public class HomeController implements Initializable {
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setPromptText("Filter by Genre");
 
-        searchBtn.setOnAction(actionEvent -> {
-            String searchText = searchField.getText();
-            int idx = genreComboBox.getSelectionModel().getSelectedIndex();
-            Genre genre = null;
-            if (idx >= 0) {
-                genre = Genre.values()[idx];
-            }
-            filterMovies(searchText, genre);
-            sortMovies(ascending);
+        searchField.setOnAction(event -> triggerSearch());
 
-            if (observableMovies.size() != allMovies.size()) {
-                clearBtn.setVisible(true);
-            }
-            else {
-                clearBtn.setVisible(false);
-            }
+        searchBtn.setOnAction(actionEvent -> triggerSearch());
 
-        });
-      
         sortBtn.setOnAction(actionEvent -> {
             ascending = !ascending;
             sortMovies(ascending);
@@ -92,7 +77,20 @@ public class HomeController implements Initializable {
             clearBtn.setVisible(false);
         });
     }
-  
+
+    private void triggerSearch() {
+        String searchText = searchField.getText();
+        int idx = genreComboBox.getSelectionModel().getSelectedIndex();
+        Genre genre = null;
+        if (idx >= 0) {
+            genre = Genre.values()[idx];
+        }
+        filterMovies(searchText, genre);
+        sortMovies(ascending);
+
+        clearBtn.setVisible(observableMovies.size() != allMovies.size());
+    }
+
     // Help method for filter method
     private static boolean isMatchingSearchText(String searchText, String origin) {
         return searchText == null || searchText.isEmpty() || origin.toLowerCase().contains(searchText.toLowerCase());
