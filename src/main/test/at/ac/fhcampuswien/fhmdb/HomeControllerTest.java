@@ -233,4 +233,17 @@ class HomeControllerTest {
         List<Movie> actualWithSearchTextAndGenre = homeController.getShownMovies();
         assertTrue(actualWithSearchTextAndGenre.isEmpty());
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Interstellar, 1",
+            "Action, 2",
+            "Nonexistent, 0",
+            "'', 3"
+    })
+    public void search_findsCorrectNumberOfMovies(String searchText, int expectedCount) {
+        homeController.filterMovies(searchText, null);
+        List<Movie> actualMovies = homeController.getShownMovies();
+        assertEquals(expectedCount, actualMovies.size());
+    }
 }
