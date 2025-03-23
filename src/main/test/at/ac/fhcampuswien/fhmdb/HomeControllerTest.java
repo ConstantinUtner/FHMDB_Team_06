@@ -21,9 +21,45 @@ class HomeControllerTest {
 
         // GIVEN: Replace allMovies with test list
         homeController.allMovies = List.of(
-                new Movie("A Silent Voice", "A young man is ostracized by his classmates after bullying a deaf girl so severely that she eventually moves away. Years later, he sets out on a journey to seek forgiveness.", List.of(Genre.ANIMATION, Genre.DRAMA, Genre.ROMANCE)),
-                new Movie("Interstellar", "A team of researchers travels through a wormhole in the universe in search of new worlds to ensure the survival of humanity.", List.of(Genre.SCIENCE_FICTION, Genre.ACTION, Genre.DRAMA)),
-                new Movie ("Saw", "Two strangers wake up in a room with no memory of how they got there, only to discover they are pawns in the deadly game of a notorious serial killer.", List.of(Genre.HORROR,Genre.MYSTERY))
+                new Movie(
+                        "A Silent Voice",
+                        "A young man is ostracized by his classmates after bullying a deaf girl so severely that she eventually moves away. Years later, he sets out on a journey to seek forgiveness.",
+                        List.of(Genre.ANIMATION, Genre.DRAMA, Genre.ROMANCE),
+                        "M001",
+                        2016,
+                        "https://example.com/a_silent_voice.jpg",
+                        130,
+                        List.of("Naoko Yamada"),
+                        List.of("Reiko Yoshida"),
+                        List.of("Miyu Irino", "Saori Hayami"),
+                        8.2
+                ),
+                new Movie(
+                        "Interstellar",
+                        "A team of researchers travels through a wormhole in the universe in search of new worlds to ensure the survival of humanity.",
+                        List.of(Genre.SCIENCE_FICTION, Genre.ACTION, Genre.DRAMA),
+                        "M002",
+                        2014,
+                        "https://example.com/interstellar.jpg",
+                        169,
+                        List.of("Christopher Nolan"),
+                        List.of("Jonathan Nolan", "Christopher Nolan"),
+                        List.of("Matthew McConaughey", "Anne Hathaway", "Jessica Chastain"),
+                        8.6
+                ),
+                new Movie(
+                        "Saw",
+                        "Two strangers wake up in a room with no memory of how they got there, only to discover they are pawns in the deadly game of a notorious serial killer.",
+                        List.of(Genre.HORROR, Genre.MYSTERY),
+                        "M003",
+                        2004,
+                        "https://example.com/saw.jpg",
+                        103,
+                        List.of("James Wan"),
+                        List.of("Leigh Whannell"),
+                        List.of("Cary Elwes", "Leigh Whannell", "Danny Glover"),
+                        7.6
+                )
         );
         homeController.refreshMovies();
         homeController.sortMovies(true);

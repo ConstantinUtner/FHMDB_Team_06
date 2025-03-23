@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.models.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -11,6 +12,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+
+import java.io.IOException;
 import java.util.Comparator;
 
 import java.net.URL;
@@ -32,29 +35,41 @@ public class HomeController implements Initializable {
     public JFXComboBox genreComboBox;
 
     @FXML
+    public JFXComboBox releaseYearComboBox;
+
+    @FXML
+    public JFXComboBox ratingComboBox;
+
+    @FXML
     public JFXButton sortBtn;
 
     @FXML
     public JFXButton clearBtn;
 
-    public List<Movie> allMovies = Movie.initializeMovies();
+    public List<Movie> allMovies = MovieAPI.getMovies(null, null, null, null);
 
     private ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
     private boolean ascending = true;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        observableMovies.addAll(allMovies);         // add dummy data to observable list
-        sortMovies(ascending);
 
         // initialize UI stuff
+        observableMovies.setAll(allMovies);
+        sortMovies(ascending);
+
         movieListView.setItems(observableMovies);   // set data of observable list to list view
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
+        // Fill ComboBoxes
         genreComboBox.getItems().addAll(Genre.values());
-        genreComboBox.setPromptText("Filter by Genre");
+        releaseYearComboBox.getItems().addAll(getAllReleaseYears());
 
-        searchField.setOnAction(event -> triggerSearch());
+        for (int i = 0; i <= 10; i++) {
+            ratingComboBox.getItems().add(String.valueOf(i));
+        }
+
+        searchField.setOnAction(event -> triggerSearch()); // triggerSearch() will be called if enter is pressed
 
         searchBtn.setOnAction(actionEvent -> triggerSearch());
 
@@ -72,6 +87,8 @@ public class HomeController implements Initializable {
         clearBtn.setOnAction(actionEvent -> {
             searchField.clear();
             genreComboBox.getSelectionModel().clearSelection();
+            releaseYearComboBox.getSelectionModel().clearSelection();
+            ratingComboBox.getSelectionModel().clearSelection();
             refreshMovies();
             sortMovies(ascending);
             clearBtn.setVisible(false);
@@ -79,16 +96,25 @@ public class HomeController implements Initializable {
     }
 
     private void triggerSearch() {
-        String searchText = searchField.getText();
-        int idx = genreComboBox.getSelectionModel().getSelectedIndex();
-        Genre genre = null;
-        if (idx >= 0) {
-            genre = Genre.values()[idx];
-        }
-        filterMovies(searchText, genre);
-        sortMovies(ascending);
+            String searchText = searchField.getText();
 
-        clearBtn.setVisible(observableMovies.size() != allMovies.size());
+            int idx = genreComboBox.getSelectionModel().getSelectedIndex();
+
+            Genre genre = idx >= 0 ? Genre.values()[idx] : null;
+
+            String releaseYear = releaseYearComboBox.getSelectionModel().getSelectedItem() != null
+                    ? releaseYearComboBox.getSelectionModel().getSelectedItem().toString()
+                    : "";
+
+            String ratingFrom = ratingComboBox.getSelectionModel().getSelectedItem() != null
+                    ? ratingComboBox.getSelectionModel().getSelectedItem().toString()
+                    : "";
+
+
+                List<Movie> moviesFromAPI = MovieAPI.getMovies(searchText, genre, releaseYear, ratingFrom);
+                observableMovies.setAll(moviesFromAPI);
+                sortMovies(ascending);
+                clearBtn.setVisible(observableMovies.size() != allMovies.size());
     }
 
     // Help method for filter method
@@ -131,5 +157,17 @@ public class HomeController implements Initializable {
 
     public List<Movie> getShownMovies(){
         return new ArrayList<>(observableMovies);
+    }
+
+    private List<String> getAllReleaseYears() {
+        return allMovies.stream()
+                // Takes the releaseYear of each movie, turns it into a String and creates a new Stream with these Strings
+                .map(movie -> String.valueOf(movie.getReleaseYear()))
+                // Removes duplicate years
+                .distinct()
+                // Sorts the years in ascending order (as Strings)
+                .sorted()
+                // Collects the result into a list
+                .toList();
     }
 }
