@@ -286,4 +286,11 @@ class HomeControllerTest {
         assertEquals(expectedCount, actualMovies.size());
     }
 
+    @Test
+    public void getLongestMovieTitle_returnsCorrectLength() {
+        int expected = "A Silent Voice".length();  // 15
+        int actual = homeController.getLongestMovieTitle(homeController.allMovies);
+        assertEquals(expected, actual);
+    }
+
 }
