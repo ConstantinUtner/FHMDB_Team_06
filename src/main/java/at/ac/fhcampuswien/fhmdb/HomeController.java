@@ -170,4 +170,12 @@ public class HomeController implements Initializable {
                 // Collects the result into a list
                 .toList();
     }
+
+    public int getLongestMovieTitle(List<Movie> movies) {
+        return movies.stream()
+                .filter(m -> m.getTitle() != null)
+                .mapToInt(m -> m.getTitle().length())
+                .max()
+                .orElse(0);
+    }
 }
