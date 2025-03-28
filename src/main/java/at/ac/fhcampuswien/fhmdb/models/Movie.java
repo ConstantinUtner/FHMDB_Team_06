@@ -53,6 +53,10 @@ public class Movie implements Comparable<Movie> {
         return releaseYear;
     }
 
+    public Number getRating() {
+        return rating;
+    }
+
     //    public static List<Movie> initializeMovies(){
 //        List<Movie> movies;
 //
