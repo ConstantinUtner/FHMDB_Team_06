@@ -36,6 +36,8 @@
          <JFXComboBox fx:id="ratingComboBox" focusColor="#f5c518" styleClass="filter-combo-box" promptText="Filter by Rating" stylesheets="@styles.css" />
          <JFXButton fx:id="searchBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Filter" />
          <JFXButton fx:id="clearBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Clear" visible="false"/>
+         <JFXButton fx:id="popularActorBtn" text="Most Popular Actor" onAction="#onPopularActorClicked" />
+         <Label fx:id="popularActorLabel" text="Most popular actor will appear here" />
       </children>
       <VBox.margin>
          <Insets />

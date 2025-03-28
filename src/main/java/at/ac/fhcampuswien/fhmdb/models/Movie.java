@@ -32,6 +32,10 @@ public class Movie implements Comparable<Movie> {
         this.rating = rating;
     }
 
+    public List<String> getMainCast() {
+        return mainCast;
+    }
+
     @Override
     public int compareTo(Movie other) {
         return title.compareToIgnoreCase(other.title);

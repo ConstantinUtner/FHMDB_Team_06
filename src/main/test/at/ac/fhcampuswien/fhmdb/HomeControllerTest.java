@@ -293,4 +293,40 @@ class HomeControllerTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void mostPopularActor_shouldReturnCorrectActor() {
+        HomeController controller = new HomeController();
+
+        List<Movie> movies = List.of(
+                new Movie("Movie A", "desc", List.of(Genre.ACTION), List.of("Tom", "Anna", "Max")),
+                new Movie("Movie B", "desc", List.of(Genre.DRAMA), List.of("Tom", "Lisa")),
+                new Movie("Movie C", "desc", List.of(Genre.COMEDY), List.of("Tom"))
+        );
+
+        String result = controller.getMostPopularActor(movies);
+        assertEquals("Tom", result);
+    }
+
+    @Test
+    public void mostPopularActor_shouldReturnNull_whenListIsEmpty() {
+        HomeController controller = new HomeController();
+
+        List<Movie> movies = List.of();
+
+        String result = controller.getMostPopularActor(movies);
+        assertNull(result);
+    }
+
+    @Test
+    public void mostPopularActor_shouldReturnNull_whenAllCastsAreNull() {
+        HomeController controller = new HomeController();
+
+        List<Movie> movies = List.of(
+                new Movie("Movie A", "desc", List.of(Genre.ACTION), null),
+                new Movie("Movie B", "desc", List.of(Genre.DRAMA), null)
+        );
+
+        String result = controller.getMostPopularActor(movies);
+        assertNull(result);
+    }
 }

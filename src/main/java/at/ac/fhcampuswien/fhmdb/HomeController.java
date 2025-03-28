@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -20,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -45,6 +47,9 @@ public class HomeController implements Initializable {
 
     @FXML
     public JFXButton clearBtn;
+
+    @FXML
+    private Label popularActorLabel;
 
     public List<Movie> allMovies = MovieAPI.getMovies(null, null, null, null);
 
@@ -177,5 +182,26 @@ public class HomeController implements Initializable {
                 .mapToInt(m -> m.getTitle().length())
                 .max()
                 .orElse(0);
+    }
+
+    @FXML
+    private void onPopularActorClicked() {
+        String popularActor = getMostPopularActor(allMovies);
+        if (popularActor != null) {
+            popularActorLabel.setText("Most popular actor: " + popularActor);
+        } else {
+            popularActorLabel.setText("No actors found");
+        }
+    }
+
+    public String getMostPopularActor(List<Movie> movies) {
+        return movies.stream()
+                .filter(m -> m.getMainCast() != null)
+                .flatMap(m -> m.getMainCast().stream())
+                .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()))
+                .entrySet().stream()
+                .max((e1, e2) -> Long.compare(e1.getValue(), e2.getValue()))
+                .map(entry -> entry.getKey())
+                .orElse(null);
     }
 }
