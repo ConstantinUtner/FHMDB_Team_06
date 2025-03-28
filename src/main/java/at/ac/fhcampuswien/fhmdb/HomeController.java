@@ -13,13 +13,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
-import java.io.IOException;
 import java.util.Comparator;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -159,6 +159,13 @@ public class HomeController implements Initializable {
         return new ArrayList<>(observableMovies);
     }
 
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear){
+        return movies.stream()
+                .filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+
     private List<String> getAllReleaseYears() {
         return allMovies.stream()
                 // Takes the releaseYear of each movie, turns it into a String and creates a new Stream with these Strings
@@ -170,4 +177,6 @@ public class HomeController implements Initializable {
                 // Collects the result into a list
                 .toList();
     }
+
+
 }

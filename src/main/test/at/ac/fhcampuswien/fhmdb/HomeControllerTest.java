@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class HomeControllerTest {
@@ -286,4 +287,33 @@ class HomeControllerTest {
         assertEquals(expectedCount, actualMovies.size());
     }
 
+    @Test
+    public void test_movies_between_years_exact_match() {
+        // WHEN
+        List<Movie> actualMovies = homeController.getMoviesBetweenYears(homeController.allMovies, 2013, 2018);
+        // THEN
+        List<Movie> expected = List.of(homeController.allMovies.get(0), homeController.allMovies.get(1));
+        assertEquals(2, actualMovies.size());
+        assertIterableEquals(expected, actualMovies);
+    }
+
+    @Test
+    public void test_movies_between_invalid_years() {
+        // WHEN
+        List<Movie> actualMovies = homeController.getMoviesBetweenYears(homeController.allMovies, 2013, -2018);
+        // THEN
+        assertTrue(actualMovies.isEmpty());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "2013, 2016, 1",
+            "2000, 3000, 3",
+            "0, 9000, 3",
+            "1990, 2000, 0"
+    })
+    public void test_correct_number_of_movies_between_years(int startYear, int endYear, int expectedCount) {
+        List<Movie> actualMovies = homeController.getMoviesBetweenYears(homeController.allMovies, startYear, endYear);
+        assertEquals(expectedCount, actualMovies.size());
+    }
 }
