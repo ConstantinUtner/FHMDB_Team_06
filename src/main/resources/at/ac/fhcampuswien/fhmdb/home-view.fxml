@@ -31,7 +31,9 @@
       <children>
          <JFXButton fx:id="sortBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Sort (asc)" />
          <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0" promptText="Search FHMDb" />
-         <JFXComboBox fx:id="genreComboBox" focusColor="#f5c518" styleClass="filter-combo-box" stylesheets="@styles.css" />
+         <JFXComboBox fx:id="genreComboBox" focusColor="#f5c518" styleClass="filter-combo-box" promptText="Filter by Genre" stylesheets="@styles.css" />
+         <JFXComboBox fx:id="releaseYearComboBox" focusColor="#f5c518" styleClass="filter-combo-box" promptText="Filter by Release Year" stylesheets="@styles.css" />
+         <JFXComboBox fx:id="ratingComboBox" focusColor="#f5c518" styleClass="filter-combo-box" promptText="Filter by Rating" stylesheets="@styles.css" />
          <JFXButton fx:id="searchBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Filter" />
          <JFXButton fx:id="clearBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Clear" visible="false"/>
       </children>
