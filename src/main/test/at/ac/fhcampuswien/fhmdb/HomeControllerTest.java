@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class HomeControllerTest {
@@ -355,29 +356,74 @@ class HomeControllerTest {
 
     // Java Streams
 
-    @Test
-    public void testGetMostPopularActor() {
-        String popularActor = homeController.getMostPopularActor(homeController.allMovies);
-        assertEquals("Matthew McConaughey", popularActor);
+    private List<Movie> getTestMovieList(int movieListIdx){
+        if (movieListIdx == 0){
+            return homeController.allMovies;
+        }
+        else if (movieListIdx == 1) {
+            //silent voice
+            return List.of(homeController.allMovies.get(0));
+        }
+        else if (movieListIdx == 2) {
+            return new ArrayList<>();
+        }
+        return null;
     }
 
-    @Test
-    public void testGetLongestMovieTitle() {
-        int longestTitleLength = homeController.getLongestMovieTitle(homeController.allMovies);
-        assertEquals("The Curious Case of Benjamin Button".length(), longestTitleLength);
+    @ParameterizedTest
+    @CsvSource({
+            "Matthew McConaughey, 0",
+            "Saori Hayami, 1",
+            "'', 2",
+            "'', 3"
+    })
+    public void test_get_most_popular_actor(String actor, int listIdx) {
+        String popularActor = homeController.getMostPopularActor(getTestMovieList(listIdx));
+        assertEquals(actor, popularActor);
     }
 
-    @Test
-    public void testCountMoviesFrom() {
-        long count = homeController.countMoviesFrom(homeController.allMovies, "Christopher Nolan");
-        assertEquals(2, count);
+    @ParameterizedTest
+    @CsvSource({
+            "35, 0",
+            "14, 1",
+            "0, 2",
+            "-1, 3"
+    })
+    public void test_get_longest_movie_title(int count, int listIdx) {
+        int longestTitleLength = homeController.getLongestMovieTitle(getTestMovieList(listIdx));
+        assertEquals(count, longestTitleLength);
     }
 
-    @Test
-    public void testGetMoviesBetweenYears() {
-        List<Movie> moviesBetween = homeController.getMoviesBetweenYears(homeController.allMovies, 2014, 2020);
-        assertEquals(2, moviesBetween.size());
-        assertTrue(moviesBetween.stream().anyMatch(movie -> movie.getTitle().equals("A Silent Voice")));
-        assertTrue(moviesBetween.stream().anyMatch(movie -> movie.getTitle().equals("Interstellar")));
+    @ParameterizedTest
+    @CsvSource({
+            "2, Christopher Nolan, 0",
+            "1, Naoko Yamada, 1",
+            "0, Tom Holland, 2",
+            "-1, Viktoria Angelmayer, 3"
+    })
+    public void test_count_movies_from(long expectedCount, String director, int listIdx) {
+        long count = homeController.countMoviesFrom(getTestMovieList(listIdx), director);
+        assertEquals(expectedCount, count);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "2, 2014, 2016, 0",
+            "0, 2014, -2016, 0",
+            "6, 0, 9000, 0",
+            "1, 2014, 2016, 1",
+            "0, 2014, 2016, 2",
+            "0, 2014, 2016, 3"
+    })
+    public void test_get_movies_between_years_counts(int expectedCount, int startYear, int endYear, int listIdx) {
+        List<Movie> moviesBetween = homeController.getMoviesBetweenYears(getTestMovieList(listIdx), startYear, endYear);
+        assertEquals(expectedCount, moviesBetween.size());
+   }
+
+   @Test
+    public void test_get_movies_between_years() {
+        List<Movie> moviesBetween = homeController.getMoviesBetweenYears(homeController.allMovies, 2014, 2016);
+        assertEquals(homeController.allMovies.get(0), moviesBetween.get(0));
+        assertEquals(homeController.allMovies.get(1), moviesBetween.get(1));
     }
 }

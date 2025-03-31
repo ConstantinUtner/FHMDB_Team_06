@@ -12,8 +12,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-
-import java.io.IOException;
 import java.util.*;
 
 import java.net.URL;
@@ -169,7 +167,6 @@ public class HomeController implements Initializable {
                 .toList();
     }
 
-
     private List<Genre> getAllGenres() {
         return allMovies.stream()
                 .flatMap(movie -> movie.getGenres().stream())
@@ -181,33 +178,45 @@ public class HomeController implements Initializable {
     // Java Streams
 
     public String getMostPopularActor(List<Movie> movies) {
-        return movies.stream()
-                .flatMap(movie -> movie.getMainCast().stream())
-                .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()))
-                .entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse("");
+        if (movies != null) {
+            return movies.stream()
+                    .flatMap(movie -> movie.getMainCast().stream())
+                    .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()))
+                    .entrySet().stream()
+                    .max(Map.Entry.comparingByValue())
+                    .map(Map.Entry::getKey)
+                    .orElse("");
+        }
+        return "";
     }
 
     public int getLongestMovieTitle(List<Movie> movies) {
-        return movies.stream()
-                .map(Movie::getTitle)
-                .mapToInt(String::length)
-                .max()
-                .orElse(0);
+        if (movies != null) {
+            return movies.stream()
+                    .map(Movie::getTitle)
+                    .mapToInt(String::length)
+                    .max()
+                    .orElse(0);
+        }
+        return -1;
     }
 
     public long countMoviesFrom(List<Movie> movies, String director) {
-        return movies.stream()
-                .filter(movie -> movie.getDirectors() != null && movie.getDirectors().contains(director))
-                .count();
+        if (movies != null) {
+            return movies.stream()
+                    .filter(movie -> movie.getDirectors() != null && movie.getDirectors().contains(director))
+                    .count();
+        }
+        return -1;
     }
 
     public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
-        return movies.stream()
-                .filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)
-                .collect(Collectors.toList());
+        if (movies != null) {
+            return movies.stream()
+                    .filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
 }
