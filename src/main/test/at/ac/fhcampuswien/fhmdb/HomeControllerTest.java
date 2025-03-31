@@ -355,7 +355,6 @@ class HomeControllerTest {
     }
 
     // Java Streams
-
     private List<Movie> getTestMovieList(int movieListIdx){
         if (movieListIdx == 0){
             return homeController.allMovies;
@@ -371,12 +370,12 @@ class HomeControllerTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
+    @CsvSource(value = {
             "Matthew McConaughey, 0",
             "Saori Hayami, 1",
             "'', 2",
-            "'', 3"
-    })
+            "null, 3"
+    }, nullValues={"null"})
     public void test_get_most_popular_actor(String actor, int listIdx) {
         String popularActor = homeController.getMostPopularActor(getTestMovieList(listIdx));
         assertEquals(actor, popularActor);
@@ -416,8 +415,16 @@ class HomeControllerTest {
             "0, 2014, 2016, 3"
     })
     public void test_get_movies_between_years_counts(int expectedCount, int startYear, int endYear, int listIdx) {
-        List<Movie> moviesBetween = homeController.getMoviesBetweenYears(getTestMovieList(listIdx), startYear, endYear);
-        assertEquals(expectedCount, moviesBetween.size());
+        List<Movie> list = getTestMovieList(listIdx);
+        List<Movie> moviesBetween = homeController.getMoviesBetweenYears(list, startYear, endYear);
+        try {
+            assertEquals(expectedCount, moviesBetween.size());
+        }
+        catch (NullPointerException e) {
+            if (list != null){
+                fail("Returned list is null but should not be!");
+            }
+        }
    }
 
    @Test

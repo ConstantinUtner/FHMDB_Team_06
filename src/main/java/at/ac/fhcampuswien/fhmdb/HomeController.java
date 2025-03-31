@@ -187,7 +187,7 @@ public class HomeController implements Initializable {
                     .map(Map.Entry::getKey)
                     .orElse("");
         }
-        return "";
+        return null;
     }
 
     public int getLongestMovieTitle(List<Movie> movies) {
@@ -216,7 +216,7 @@ public class HomeController implements Initializable {
                     .filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)
                     .collect(Collectors.toList());
         }
-        return new ArrayList<>();
+        return null;
     }
 
 }
