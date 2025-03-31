@@ -169,6 +169,7 @@ public class HomeController implements Initializable {
                 .toList();
     }
 
+
     private List<Genre> getAllGenres() {
         return allMovies.stream()
                 .flatMap(movie -> movie.getGenres().stream())
@@ -209,9 +210,4 @@ public class HomeController implements Initializable {
                 .collect(Collectors.toList());
     }
 
-    public static void main(String[] args) {
-        HomeController controller = new HomeController();
-
-        controller.getMoviesBetweenYears(controller.allMovies, 2000, 2005).stream().map(Movie::getTitle).forEach(System.out::println);
-    }
 }

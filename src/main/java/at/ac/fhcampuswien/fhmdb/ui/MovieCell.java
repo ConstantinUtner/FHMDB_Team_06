@@ -16,7 +16,8 @@ public class MovieCell extends ListCell<Movie> {
     private final Label title = new Label();
     private final Label detail = new Label();
     private final Label genre = new Label();
-    private final VBox layout = new VBox(title, detail, genre);
+    private final Label rating_year = new Label();
+    private final VBox layout = new VBox(title, detail, genre, rating_year);
 
     @Override
     protected void updateItem(Movie movie, boolean empty) {
@@ -44,6 +45,13 @@ public class MovieCell extends ListCell<Movie> {
                 }
                 genre.setText(joiner.toString());
             }
+
+            String ratingText = movie.getRating() != null
+                    ? String.format("Rating: %.1f", movie.getRating().doubleValue())
+                    : "Rating: N/A";
+            String yearText = "Year: " + movie.getReleaseYear();
+            rating_year.setText(ratingText + " | " + yearText);
+            rating_year.getStyleClass().add("text-white");
 
             // genre text style
             genre.getStyleClass().add("genre-text");

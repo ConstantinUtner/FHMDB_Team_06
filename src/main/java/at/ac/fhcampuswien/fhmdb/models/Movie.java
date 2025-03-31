@@ -80,4 +80,5 @@ public class Movie implements Comparable<Movie> {
     public Number getRating() {
         return rating;
     }
+
 }
