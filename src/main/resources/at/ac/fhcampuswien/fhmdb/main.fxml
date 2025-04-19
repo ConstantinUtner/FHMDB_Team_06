@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane fx:id="root"
+           xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="at.ac.fhcampuswien.fhmdb.MainController"
+           stylesheets="@styles.css">
+
+    <!-- Hauptlayout mit Kopfzeile & dynamischem Inhalt -->
+    <BorderPane fx:id="mainLayout">
+
+        <!-- Kopfzeile -->
+        <top>
+            <HBox alignment="CENTER_LEFT"
+                  spacing="10"
+                  styleClass="background-black">
+                <padding>
+                    <Insets top="10" bottom="10" left="10" right="10"/>
+                </padding>
+
+                <!-- Logo -->
+                <Label text="FHMDb"
+                       styleClass="background-yellow">
+                    <font>
+                        <Font name="Calibri Bold" size="24.0"/>
+                    </font>
+                </Label>
+
+                <!-- Willkommenstext -->
+                <Label text="Welcome to FHMDb!"
+                       styleClass="text-white" />
+
+                <!-- Platzhalter für rechte Ausrichtung -->
+                <Pane HBox.hgrow="ALWAYS" />
+
+                <!-- Hamburger-Menü -->
+                <Label fx:id="hamburgerIcon"
+                       text="☰"
+                       onMouseClicked="#toggleSidebar"
+                       styleClass="hamburger-icon" />
+            </HBox>
+        </top>
+
+        <!-- Dynamischer Inhaltsbereich -->
+        <center>
+            <StackPane fx:id="mainContent" />
+        </center>
+    </BorderPane>
+
+    <!-- Overlay Sidebar -->
+    <VBox fx:id="sidebar"
+          visible="false"
+          managed="false"
+          spacing="15"
+          StackPane.alignment="TOP_LEFT"
+          styleClass="sidebar"
+          style="-fx-padding: 15;"
+          prefWidth="200"
+          maxWidth="200">
+
+        <!-- Navigationselemente -->
+        <Label text="Home"
+               onMouseClicked="#loadHomeView"
+               styleClass="nav-label" />
+
+        <Label text="Watchlist"
+               onMouseClicked="#loadWatchlistView"
+               styleClass="nav-label" />
+
+        <Label text="About"
+               styleClass="nav-label" />
+    </VBox>
+</StackPane>
