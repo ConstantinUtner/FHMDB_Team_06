@@ -52,6 +52,11 @@
                  text="Clear"
                  visible="false"
                  styleClass="background-yellow"/>
+
+      <JFXButton fx:id="watchlistBtn"
+                 text="watchlist"
+                 styleClass="background-yellow"/>
+
    </HBox>
 
    <!-- Movie-ListView -->

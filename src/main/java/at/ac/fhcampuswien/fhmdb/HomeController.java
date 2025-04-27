@@ -16,10 +16,14 @@ import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,6 +37,7 @@ public class HomeController implements Initializable {
     @FXML public JFXComboBox<String> ratingComboBox;
     @FXML public JFXButton sortBtn;
     @FXML public JFXButton clearBtn;
+    @FXML public JFXButton watchlistBtn;
 
     public List<Movie> allMovies = new ArrayList<>();
 
@@ -91,6 +96,19 @@ public class HomeController implements Initializable {
             refreshMovies();
             sortMovies(ascending);
             clearBtn.setVisible(false);
+        });
+        watchlistBtn.setOnAction(e -> {
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("watchlist-view.fxml"));
+                Scene watchlistScene = new Scene(fxmlLoader.load());
+                Stage stage = (Stage) watchlistBtn.getScene().getWindow();
+                stage.setScene(watchlistScene);
+                stage.show();
+            } catch (IOException ex) {
+                showAlert(Alert.AlertType.ERROR,
+                        "Fehler beim Wechseln",
+                        "Die Watchlist konnte nicht geladen werden.\nBitte versuche es später erneut.");
+            }
         });
     }
 
