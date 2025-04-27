@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
-    @FXML public JFXButton searchBtn;
+    @FXML public JFXButton FilterBtn;
     @FXML public TextField searchField;
     @FXML public JFXListView<Movie> movieListView;
     @FXML public JFXComboBox<Genre> genreComboBox;
@@ -82,7 +82,7 @@ public class HomeController implements Initializable {
         }
 
         searchField.setOnAction(e -> triggerSearch());
-        searchBtn.setOnAction(e -> triggerSearch());
+        FilterBtn.setOnAction(e -> triggerSearch());
         sortBtn.setOnAction(e -> {
             ascending = !ascending;
             sortMovies(ascending);
@@ -99,8 +99,7 @@ public class HomeController implements Initializable {
         });
         watchlistBtn.setOnAction(e -> {
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("watchlist-view.fxml"));
-                Scene watchlistScene = new Scene(fxmlLoader.load());
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/at/ac/fhcampuswien/fhmdb/watchlist-view.fxml"));                Scene watchlistScene = new Scene(fxmlLoader.load());
                 Stage stage = (Stage) watchlistBtn.getScene().getWindow();
                 stage.setScene(watchlistScene);
                 stage.show();

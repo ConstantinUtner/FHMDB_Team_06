@@ -44,7 +44,7 @@
                    focusColor="#f5c518"
                    styleClass="filter-combo-box"/>
 
-      <JFXButton fx:id="searchBtn"
+      <JFXButton fx:id="FilterBtn"
                  text="Filter"
                  styleClass="background-yellow"/>
 
