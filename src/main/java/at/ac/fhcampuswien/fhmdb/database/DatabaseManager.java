@@ -36,27 +36,20 @@ public class DatabaseManager {
     }
 
     public static void createTables() throws SQLException {
-        if (conn == null) {
-            createConnectionSource();
-        }
-
-        // Tabellen anlegen (wenn sie noch nicht existieren)
-        TableUtils.createTableIfNotExists(conn, MovieEntity.class);
-        TableUtils.createTableIfNotExists(conn, WatchlistMovieEntity.class);
+        TableUtils.createTableIfNotExists(getConnectionSource(), MovieEntity.class);
+        TableUtils.createTableIfNotExists(getConnectionSource(), WatchlistMovieEntity.class);
     }
 
     public static Dao<MovieEntity, Long> getMovieDao() throws SQLException {
         if (movieDao == null) {
-            createConnectionSource();
-            movieDao = DaoManager.createDao(conn, MovieEntity.class);
+            movieDao = DaoManager.createDao(getConnectionSource(), MovieEntity.class);
         }
         return movieDao;
     }
 
     public static Dao<WatchlistMovieEntity, Long> getWatchlistDao() throws SQLException {
         if (watchlistDao == null) {
-            createConnectionSource();
-            watchlistDao = DaoManager.createDao(conn, WatchlistMovieEntity.class);
+            watchlistDao = DaoManager.createDao(getConnectionSource(), WatchlistMovieEntity.class);
         }
         return watchlistDao;
     }

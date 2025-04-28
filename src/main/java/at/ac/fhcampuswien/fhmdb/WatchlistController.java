@@ -54,6 +54,8 @@ public class WatchlistController implements Initializable {
                             "Entfernen fehlgeschlagen",
                             "Beim Entfernen von „" + movie.getTitle() +
                                     "“ ist ein Fehler aufgetreten.\nBitte versuche es später erneut.");
+                    System.err.println("Technische Fehlermeldung beim Hinzufügen zur Watchlist: " + e.getMessage());
+                    e.printStackTrace();
                 }
                 return false;
             };
@@ -69,6 +71,8 @@ public class WatchlistController implements Initializable {
                             "Bitte prüfe, ob die App Schreib‑ und Leserechte für den Speicherordner besitzt " +
                             "und genügend freier Speicherplatz vorhanden ist. " +
                             "Starte die App neu, wenn das Problem weiterhin besteht.");
+            System.err.println("Technische Fehlermeldung beim Hinzufügen zur Watchlist: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
