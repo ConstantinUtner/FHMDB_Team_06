@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXListView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/15.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="at.ac.fhcampuswien.fhmdb.WatchlistController"
+      prefHeight="331.0"
+      prefWidth="570.0"
+      stylesheets="@styles.css"
+      styleClass="background-black">
+
+    <!-- WATCHLIST-LISTVIEW -->
+    <JFXListView fx:id="watchlistListView"
+    VBox.vgrow="ALWAYS"
+    styleClass="background-black" />
+</VBox>

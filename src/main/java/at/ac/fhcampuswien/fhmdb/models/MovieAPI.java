@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
+import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;  // ✅ GEÄNDERT: Exception importiert
 import com.google.gson.Gson;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -18,7 +19,10 @@ public class MovieAPI {
 
     // URL Builder
     private static String buildUrl(String query, Genre genre, String releaseYear, String ratingFrom) {
-        HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(BASE_URL), "Error: BASE_URL is invalid. Please check the URL.").newBuilder();
+        HttpUrl.Builder urlBuilder = Objects.requireNonNull(
+                HttpUrl.parse(BASE_URL),
+                "Error: BASE_URL is invalid. Please check the URL."
+        ).newBuilder();
 
         if (query != null && !query.isEmpty()) {
             urlBuilder.addQueryParameter("query", query);
@@ -37,7 +41,7 @@ public class MovieAPI {
     }
 
     // Get Movies from API
-    public static List<Movie> getMovies(String query, Genre genre, String releaseYear, String ratingFrom) {
+    public static List<Movie> getMovies(String query, Genre genre, String releaseYear, String ratingFrom) throws MovieApiException {
         OkHttpClient client = new OkHttpClient();
         String url = buildUrl(query, genre, releaseYear, ratingFrom);
 
@@ -48,17 +52,21 @@ public class MovieAPI {
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) { // If the HTTP response is not in the 2xx range
-                System.out.println("Could not connect to the API. (HTTP error code: " + response.code() + ")");
-                return new ArrayList<>();
+                // Exception bei HTTP-Fehler
+                throw new MovieApiException(
+                        "API-Fehler: HTTP " + response.code(),
+                        null
+                );
             }
             String json = response.body().string(); // Get the response body as a JSON string
             Gson gson = new Gson();
             Movie[] movies = gson.fromJson(json, Movie[].class); // Deserialize JSON into array of Movie objects
             return Arrays.asList(movies);
         } catch (IOException e) {
-            System.out.println("Could not connect to the API. Please check your internet connection.");
-            e.printStackTrace();
-            return new ArrayList<>(); // Return empty list on network failure
+            // Exception bei Netzwerkfehler
+            throw new MovieApiException(
+                    "Netzwerkfehler beim Abrufen der Filme", e
+            );
         }
     }
 
