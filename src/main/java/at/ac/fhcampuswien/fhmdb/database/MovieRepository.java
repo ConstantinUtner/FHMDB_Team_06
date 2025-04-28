@@ -53,7 +53,7 @@ public class MovieRepository {
     }
 
     // Fügt mehrere Filme hinzu (aus Movie → MovieEntity), wenn sie noch nicht existieren
-    public int addAllMovies(List<Movie> movies) {
+    public int addAllMovies(List<Movie> movies) throws DatabaseException {
         try {
             int count = 0;
             for (Movie movie : movies) {

@@ -50,6 +50,8 @@ public class HomeController implements Initializable {
                     "Bitte überprüfe deine Internetverbindung und versuche es später erneut.\n" +
                             "Die App kann weiterhin genutzt werden, aber einige Film‑Daten fehlen möglicherweise.");
             allMovies = Collections.emptyList();  // Fallback
+            System.err.println(e.getMessage());
+            e.printStackTrace();
         }
 
         observableMovies.setAll(allMovies);
@@ -64,6 +66,8 @@ public class HomeController implements Initializable {
                         "Speicherfehler",
                         "Beim Speichern in der Watchlist ist ein Fehler aufgetreten.\n" +
                                 "Bitte versuche es später erneut.");
+                System.err.println("Technische Fehlermeldung beim Hinzufügen zur Watchlist: " + ex.getMessage());
+                ex.printStackTrace();
             }
         };
 

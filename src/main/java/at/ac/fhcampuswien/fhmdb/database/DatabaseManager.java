@@ -47,16 +47,14 @@ public class DatabaseManager {
 
     public static Dao<MovieEntity, Long> getMovieDao() throws SQLException {
         if (movieDao == null) {
-            createConnectionSource();
-            movieDao = DaoManager.createDao(conn, MovieEntity.class);
+            movieDao = DaoManager.createDao(getConnectionSource(), MovieEntity.class);
         }
         return movieDao;
     }
 
     public static Dao<WatchlistMovieEntity, Long> getWatchlistDao() throws SQLException {
         if (watchlistDao == null) {
-            createConnectionSource();
-            watchlistDao = DaoManager.createDao(conn, WatchlistMovieEntity.class);
+            watchlistDao = DaoManager.createDao(getConnectionSource(), WatchlistMovieEntity.class);
         }
         return watchlistDao;
     }
