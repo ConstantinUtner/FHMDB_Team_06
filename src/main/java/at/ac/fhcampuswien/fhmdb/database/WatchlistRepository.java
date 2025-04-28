@@ -74,14 +74,4 @@ public class WatchlistRepository {
         }
     }
 
-
-    // Löscht alle Einträge aus der Watchlist
-    public int removeAll() throws DatabaseException{
-        try {
-            return dao.deleteBuilder().delete();
-        } catch (SQLException e) {
-            throw new DatabaseException("WatchlistRepository: Fehler beim Löschen aller Watchlist-Einträge. Prüfe, ob " +
-                    "die Watchlist-Tabelle existiert oder von einem anderen Prozess blockiert ist.", e);
-        }
-    }
 }

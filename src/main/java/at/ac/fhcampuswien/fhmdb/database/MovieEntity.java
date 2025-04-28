@@ -63,13 +63,6 @@ public class MovieEntity {
                 .collect(Collectors.joining(","));
     }
 
-    // Konvertiert Movie -> MovieEntity Liste
-    public static List<MovieEntity> fromMovies(List<Movie> movies) {
-        return movies.stream()
-                .map(movie -> new MovieEntity(movie))
-                .collect(Collectors.toList());
-    }
-
     // Konvertiert MovieEntity -> Movie Liste
     public static List<Movie> toMovies(List<MovieEntity> movieEntities) {
         return movieEntities.stream()  // Starte einen Stream über die List<MovieEntity>

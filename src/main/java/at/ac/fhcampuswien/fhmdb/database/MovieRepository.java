@@ -31,16 +31,6 @@ public class MovieRepository {
         }
     }
 
-    // Löscht alle Filme aus der Tabelle, gibt Anzahl der gelöschten Zeilen zurück
-    public int removeAll() throws DatabaseException {
-        try {
-            return dao.deleteBuilder().delete();
-        } catch (SQLException e) {
-            throw new DatabaseException("MovieRepository: Fehler beim Löschen aller Filme aus der Datenbank. " +
-                    "Prüfe, ob die Film-Tabelle existiert oder gesperrt ist.", e);
-        }
-    }
-
     // Gibt den ersten Film zurück
     public MovieEntity getMovie() throws DatabaseException {
         try {
