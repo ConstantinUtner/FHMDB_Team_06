@@ -12,7 +12,7 @@ public class WatchlistRepository {
     private final Dao<WatchlistMovieEntity, Long> dao;
 
     // Konstruktor – holt das DAO vom DatabaseManager
-    public WatchlistRepository() {
+    public WatchlistRepository() throws DatabaseException{
         try {
             this.dao = DatabaseManager.getWatchlistDao();
         } catch (SQLException e) {
@@ -22,7 +22,7 @@ public class WatchlistRepository {
     }
 
     // Gibt alle gespeicherten Watchlist-Einträge zurück
-    public List<WatchlistMovieEntity> getAll() {
+    public List<WatchlistMovieEntity> getAll() throws DatabaseException {
         try {
             return dao.queryForAll();
         } catch (SQLException e) {
@@ -33,16 +33,16 @@ public class WatchlistRepository {
 
 
     // Fügt einen Film zur Watchlist hinzu, wenn er noch nicht existiert
-    public int add(Movie movie) {
+    public boolean add(Movie movie) throws DatabaseException {
         try {
             WatchlistMovieEntity existing = dao.queryBuilder()
                     .where().eq("apiId", movie.getId())
                     .queryForFirst();
             if (existing == null) {
                 dao.create(new WatchlistMovieEntity(movie.getId()));
-                return 1;
+                return true;
             }
-            return 0;
+            return false;
         } catch (SQLException e) {
             throw new DatabaseException("WatchlistRepository: Fehler beim Hinzufügen des Films '" + movie.getTitle() +
                     "' (API-ID: " + movie.getId() + ") zur Watchlist. Prüfe, ob der Eintrag bereits existiert oder ob " +
@@ -50,7 +50,7 @@ public class WatchlistRepository {
         }
     }
 
-    public int removeFromWatchlist(String apiId) {
+    public int removeFromWatchlist(String apiId) throws DatabaseException{
         try {
             var deleteBuilder = dao.deleteBuilder();
             deleteBuilder.where().eq("apiId", apiId);
@@ -61,8 +61,22 @@ public class WatchlistRepository {
         }
     }
 
+    public boolean isInWatchlist(Movie movie) throws DatabaseException {
+        try {
+            WatchlistMovieEntity existing = dao.queryBuilder()
+                    .where().eq("apiId", movie.getId())
+                    .queryForFirst();
+            return existing != null;
+        } catch (SQLException e) {
+            throw new DatabaseException("WatchlistRepository: Fehler beim Überprüfen des Films '" + movie.getTitle() +
+                    "' (API-ID: " + movie.getId() + ") zur Watchlist. Prüfe, ob der Eintrag bereits existiert oder ob " +
+                    "die DB-Verbindung funktioniert.", e);
+        }
+    }
+
+
     // Löscht alle Einträge aus der Watchlist
-    public int removeAll() {
+    public int removeAll() throws DatabaseException{
         try {
             return dao.deleteBuilder().delete();
         } catch (SQLException e) {

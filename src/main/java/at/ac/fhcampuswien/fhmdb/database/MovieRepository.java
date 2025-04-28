@@ -12,7 +12,7 @@ public class MovieRepository {
     private final Dao<MovieEntity, Long> dao;
 
     // Konstruktor – holt das DAO vom DatabaseManager
-    public MovieRepository() {
+    public MovieRepository() throws DatabaseException {
         try {
             this.dao = DatabaseManager.getMovieDao();
         } catch (SQLException e) {
@@ -22,7 +22,7 @@ public class MovieRepository {
     }
 
     // Gibt alle gespeicherten Filme aus der Tabelle zurück
-    public List<MovieEntity> getAllMovies() {
+    public List<MovieEntity> getAllMovies() throws DatabaseException {
         try {
             return dao.queryForAll();
         } catch (SQLException e) {
@@ -32,7 +32,7 @@ public class MovieRepository {
     }
 
     // Löscht alle Filme aus der Tabelle, gibt Anzahl der gelöschten Zeilen zurück
-    public int removeAll() {
+    public int removeAll() throws DatabaseException {
         try {
             return dao.deleteBuilder().delete();
         } catch (SQLException e) {
@@ -42,7 +42,7 @@ public class MovieRepository {
     }
 
     // Gibt den ersten Film zurück
-    public MovieEntity getMovie() {
+    public MovieEntity getMovie() throws DatabaseException {
         try {
             List<MovieEntity> all = dao.queryForAll();
             return all.isEmpty() ? null : all.get(0);
@@ -53,7 +53,7 @@ public class MovieRepository {
     }
 
     // Fügt mehrere Filme hinzu (aus Movie → MovieEntity), wenn sie noch nicht existieren
-    public int addAllMovies(List<Movie> movies) {
+    public int addAllMovies(List<Movie> movies) throws DatabaseException {
         try {
             int count = 0;
             for (Movie movie : movies) {

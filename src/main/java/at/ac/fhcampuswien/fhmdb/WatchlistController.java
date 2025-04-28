@@ -48,17 +48,19 @@ public class WatchlistController implements Initializable {
                 try {
                     watchlistRepo.removeFromWatchlist(movie.getId());
                     initialize(null, null);// Liste neu laden nach Entfernen
+                    return true;
                 } catch (DatabaseException e) {
                     showAlert(Alert.AlertType.ERROR,
                             "Entfernen fehlgeschlagen",
                             "Beim Entfernen von „" + movie.getTitle() +
                                     "“ ist ein Fehler aufgetreten.\nBitte versuche es später erneut.");
                 }
+                return false;
             };
 
             // UI mit Daten befüllen
             watchlistListView.setItems(FXCollections.observableArrayList(filtered));
-            watchlistListView.setCellFactory(view -> new MovieCell(removeHandler, true));
+            watchlistListView.setCellFactory(view -> new MovieCell(removeHandler));
 
         } catch (DatabaseException e) {
             showAlert(Alert.AlertType.ERROR,

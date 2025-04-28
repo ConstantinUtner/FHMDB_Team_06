@@ -41,7 +41,7 @@ public class MovieAPI {
     }
 
     // Get Movies from API
-    public static List<Movie> getMovies(String query, Genre genre, String releaseYear, String ratingFrom) {
+    public static List<Movie> getMovies(String query, Genre genre, String releaseYear, String ratingFrom) throws MovieApiException {
         OkHttpClient client = new OkHttpClient();
         String url = buildUrl(query, genre, releaseYear, ratingFrom);
 

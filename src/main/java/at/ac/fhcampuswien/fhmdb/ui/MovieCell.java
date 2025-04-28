@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.ui;
 
+import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.geometry.Insets;
@@ -29,14 +30,8 @@ public class MovieCell extends ListCell<Movie> {
     // Main Box für Text- & Button Box
     private final HBox mainLayout = new HBox();
 
-    // ClickEventHandler für Watchlist-Button
-    private final ClickEventHandler<Movie> onWatchlistClicked;
-    private final boolean isInWatchlistView;  // Unterscheidung Home/Watchlist
-
     // MovieCell Konstruktor
-    public MovieCell(ClickEventHandler<Movie> onWatchlistClicked, boolean isInWatchlistView) {
-        this.onWatchlistClicked = onWatchlistClicked;
-        this.isInWatchlistView = isInWatchlistView;
+    public MovieCell(ClickEventHandler<Movie> onWatchlistClicked) {
 
         // Text Box Layout
         textLayout.setSpacing(10);
@@ -59,13 +54,11 @@ public class MovieCell extends ListCell<Movie> {
         showDetailsButton.getStyleClass().add("button-cell");
         watchlistButton.getStyleClass().add("button-cell");
 
-        // Button-Beschriftung je nach View
-        watchlistButton.setText(isInWatchlistView ? "Remove" : "To Watchlist");
-
         // Handler-Zuweisung per Lambda
         watchlistButton.setOnAction(event -> {
             if (getItem() != null && onWatchlistClicked != null) {
-                onWatchlistClicked.onClick(getItem());
+                boolean wasAdded = onWatchlistClicked.onClick(getItem());
+                watchlistButton.setText(wasAdded ? "Remove" : "To Watchlist");
             }
         });
     }
@@ -115,6 +108,9 @@ public class MovieCell extends ListCell<Movie> {
             genre.getStyleClass().add("genre-text");
             rating_year.getStyleClass().add("text-white");
 
+            //button text
+            boolean isInWatchlist = new WatchlistRepository().isInWatchlist(movie);
+            watchlistButton.setText(isInWatchlist ? "Remove" : "To Watchlist");
             // Layout als Cell-Grafik anzeigen
             setGraphic(mainLayout);
         }

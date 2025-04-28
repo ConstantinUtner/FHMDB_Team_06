@@ -58,17 +58,25 @@ public class HomeController implements Initializable {
         ClickEventHandler<Movie> addToWatchlistHandler = movie -> {
             try {
                 WatchlistRepository watchlistRepo = new WatchlistRepository();
-                watchlistRepo.add(movie);
+                if (watchlistRepo.add(movie)) {
+                    return true;
+                }
+                else{ //Already in list
+                    watchlistRepo.removeFromWatchlist(movie.getId());
+                    return false;
+                }
+
             } catch (DatabaseException ex) {
                 showAlert(Alert.AlertType.ERROR,
                         "Speicherfehler",
                         "Beim Speichern in der Watchlist ist ein Fehler aufgetreten.\n" +
                                 "Bitte versuche es später erneut.");
             }
+            return false;
         };
 
         movieListView.setItems(observableMovies);
-        movieListView.setCellFactory(view -> new MovieCell(addToWatchlistHandler, false));
+        movieListView.setCellFactory(view -> new MovieCell(addToWatchlistHandler));
 
         genreComboBox.getItems().addAll(getAllGenres());
         releaseYearComboBox.getItems().addAll(getAllReleaseYears());
