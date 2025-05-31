@@ -9,7 +9,11 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 
+import at.ac.fhcampuswien.fhmdb.factory.ControllerFactory;
+
 public class MainController {
+
+    private final ControllerFactory controllerFactory = new ControllerFactory();
 
     @FXML
     private StackPane mainContent;
@@ -56,7 +60,9 @@ public class MainController {
 
     private void loadView(String fxmlFile) {
         try {
-            Pane view = FXMLLoader.load(getClass().getResource(fxmlFile));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+            loader.setControllerFactory(controllerFactory);
+            Pane view = loader.load();
             mainContent.getChildren().setAll(view);
         } catch (IOException e) {
             System.err.println("Could not load view: " + fxmlFile);

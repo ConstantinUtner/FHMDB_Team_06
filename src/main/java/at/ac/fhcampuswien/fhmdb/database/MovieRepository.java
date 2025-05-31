@@ -9,16 +9,24 @@ import java.util.List;
 
 public class MovieRepository {
 
+    private static MovieRepository instance;
     private final Dao<MovieEntity, Long> dao;
 
     // Konstruktor – holt das DAO vom DatabaseManager
-    public MovieRepository() throws DatabaseException {
+    private MovieRepository() throws DatabaseException {
         try {
             this.dao = DatabaseManager.getMovieDao();
         } catch (SQLException e) {
             throw new DatabaseException("MovieRepository: DAO für Filme konnte nicht initialisiert werden. " +
                     "Bitte überprüfe deine Datenbankverbindung und ORMLite-Einstellungen.", e);
         }
+    }
+
+    public static MovieRepository getInstance() throws DatabaseException {
+        if (instance == null) {
+            instance = new MovieRepository();
+        }
+        return instance;
     }
 
     // Gibt alle gespeicherten Filme aus der Tabelle zurück

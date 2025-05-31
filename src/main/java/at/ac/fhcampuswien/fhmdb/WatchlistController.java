@@ -27,8 +27,8 @@ public class WatchlistController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         try {
             // Daten aus Repositories holen
-            WatchlistRepository watchlistRepo = new WatchlistRepository();
-            MovieRepository movieRepo = new MovieRepository();
+            WatchlistRepository watchlistRepo = WatchlistRepository.getInstance();
+            MovieRepository movieRepo = MovieRepository.getInstance();;
 
             // Liste mit gespeicherten API-IDs
             List<String> watchlistIds = watchlistRepo.getAll().stream()
@@ -62,7 +62,7 @@ public class WatchlistController implements Initializable {
 
             // UI mit Daten befüllen
             watchlistListView.setItems(FXCollections.observableArrayList(filtered));
-            watchlistListView.setCellFactory(view -> new MovieCell(removeHandler));
+            watchlistListView.setCellFactory(view -> new MovieCell(removeHandler, false));
 
         } catch (DatabaseException e) {
             showAlert(Alert.AlertType.ERROR,

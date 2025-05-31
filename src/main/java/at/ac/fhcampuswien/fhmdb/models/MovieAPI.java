@@ -2,13 +2,13 @@ package at.ac.fhcampuswien.fhmdb.models;
 
 import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;  // ✅ GEÄNDERT: Exception importiert
 import com.google.gson.Gson;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import at.ac.fhcampuswien.fhmdb.api.MovieAPIRequestBuilder;
+
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -19,26 +19,14 @@ public class MovieAPI {
 
     // URL Builder
     private static String buildUrl(String query, Genre genre, String releaseYear, String ratingFrom) {
-        HttpUrl.Builder urlBuilder = Objects.requireNonNull(
-                HttpUrl.parse(BASE_URL),
-                "Error: BASE_URL is invalid. Please check the URL."
-        ).newBuilder();
-
-        if (query != null && !query.isEmpty()) {
-            urlBuilder.addQueryParameter("query", query);
-        }
-        if (genre != null) {
-            urlBuilder.addQueryParameter("genre", genre.name());
-        }
-        if (releaseYear != null && !releaseYear.isEmpty()) {
-            urlBuilder.addQueryParameter("releaseYear", releaseYear);
-        }
-        if (ratingFrom != null && !ratingFrom.isEmpty()) {
-            urlBuilder.addQueryParameter("ratingFrom", ratingFrom);
-        }
-
-        return urlBuilder.build().toString();
+        return new MovieAPIRequestBuilder(BASE_URL)
+                .query(query)
+                .genre(genre != null ? genre.name() : null)
+                .releaseYear(releaseYear)
+                .ratingFrom(ratingFrom)
+                .build();
     }
+
 
     // Get Movies from API
     public static List<Movie> getMovies(String query, Genre genre, String releaseYear, String ratingFrom) throws MovieApiException {

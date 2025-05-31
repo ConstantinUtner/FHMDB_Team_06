@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
+import at.ac.fhcampuswien.fhmdb.factory.ControllerFactory;
+
 public class FhmdbApplication extends Application {
     @Override
     public void start(Stage stage) {
@@ -31,6 +33,7 @@ public class FhmdbApplication extends Application {
         // 2) GUI laden
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("main.fxml"));
+            fxmlLoader.setControllerFactory(new ControllerFactory());
             Scene scene = new Scene(fxmlLoader.load(), 900, 620);
             scene.getStylesheets().add(
                     Objects.requireNonNull(FhmdbApplication.class.getResource("styles.css")).toExternalForm()
