@@ -13,7 +13,11 @@ import javafx.scene.paint.Color;
 
 import java.util.StringJoiner;
 
+
 public class MovieCell extends ListCell<Movie> {
+
+    private final boolean isAddMode;
+
 
     // Text Box
     private final Label title = new Label();
@@ -31,7 +35,8 @@ public class MovieCell extends ListCell<Movie> {
     private final HBox mainLayout = new HBox();
 
     // MovieCell Konstruktor
-    public MovieCell(ClickEventHandler<Movie> onWatchlistClicked) {
+    public MovieCell(ClickEventHandler<Movie> onWatchlistClicked, boolean isAddMode) {
+        this.isAddMode = isAddMode;
 
         // Text Box Layout
         textLayout.setSpacing(10);
@@ -57,8 +62,11 @@ public class MovieCell extends ListCell<Movie> {
         // Handler-Zuweisung per Lambda
         watchlistButton.setOnAction(event -> {
             if (getItem() != null && onWatchlistClicked != null) {
-                boolean wasAdded = onWatchlistClicked.onClick(getItem());
-                watchlistButton.setText(wasAdded ? "Remove" : "To Watchlist");
+                onWatchlistClicked.onClick(getItem());
+                if (isAddMode) {
+                    watchlistButton.setText("Added to Watchlist");
+                    watchlistButton.setOpacity(0.5);
+                }
             }
         });
     }
@@ -109,8 +117,16 @@ public class MovieCell extends ListCell<Movie> {
             rating_year.getStyleClass().add("text-white");
 
             //button text
-            boolean isInWatchlist = new WatchlistRepository().isInWatchlist(movie);
-            watchlistButton.setText(isInWatchlist ? "Remove" : "To Watchlist");
+            if (isAddMode) {
+                boolean isIn = WatchlistRepository.getInstance().isInWatchlist(movie);
+                watchlistButton.setText(isIn ? "Added to Watchlist" : "To Watchlist");
+                watchlistButton.setOpacity(isIn ? 0.5 : 1.0);
+                watchlistButton.setDisable(false);
+            } else {
+                watchlistButton.setText("Remove");
+                watchlistButton.setOpacity(1.0);
+                watchlistButton.setDisable(false);
+            }
             // Layout als Cell-Grafik anzeigen
             setGraphic(mainLayout);
         }

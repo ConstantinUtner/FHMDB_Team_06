@@ -19,12 +19,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import at.ac.fhcampuswien.fhmdb.observer.Observer;
 
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
+import at.ac.fhcampuswien.fhmdb.state.*;
 
-public class HomeController implements Initializable {
+public class HomeController implements Initializable, Observer {
     @FXML public JFXButton searchBtn;
     @FXML public TextField searchField;
     @FXML public JFXListView<Movie> movieListView;
@@ -37,10 +39,23 @@ public class HomeController implements Initializable {
     public List<Movie> allMovies = new ArrayList<>();
 
     private ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
-    private boolean ascending = true;
+
+
+    private SortContext sortContext = new SortContext(); // State Pattern Context
+    private boolean isAscending = true;  // Steuert UI-Text und State-Umschaltung
+
+    private WatchlistRepository watchlistRepo;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        try {
+            watchlistRepo = WatchlistRepository.getInstance();
+            watchlistRepo.addObserver(this);
+        } catch (DatabaseException e) {
+            showAlert(Alert.AlertType.ERROR, "Fehler", "Watchlist konnte nicht initialisiert werden.");
+        }
+
         // Filme laden mit Cache‑Fallback
         try {
             allMovies = loadMoviesWithCache();
@@ -55,32 +70,24 @@ public class HomeController implements Initializable {
         }
 
         observableMovies.setAll(allMovies);
-        sortMovies(ascending);
+        sortContext.applySort(observableMovies);
 
         ClickEventHandler<Movie> addToWatchlistHandler = movie -> {
             try {
-                WatchlistRepository watchlistRepo = new WatchlistRepository();
-                if (watchlistRepo.add(movie)) {
-                    return true;
-                }
-                else{ //Already in list
-                    watchlistRepo.removeFromWatchlist(movie.getId());
-                    return false;
-                }
-
+                watchlistRepo.add(movie);
+                return true;
             } catch (DatabaseException ex) {
                 showAlert(Alert.AlertType.ERROR,
                         "Speicherfehler",
                         "Beim Speichern in der Watchlist ist ein Fehler aufgetreten.\n" +
                                 "Bitte versuche es später erneut.");
                 System.err.println("Technische Fehlermeldung beim Hinzufügen zur Watchlist: " + ex.getMessage());
-                ex.printStackTrace();
+                return false;
             }
-            return false;
         };
 
         movieListView.setItems(observableMovies);
-        movieListView.setCellFactory(view -> new MovieCell(addToWatchlistHandler));
+        movieListView.setCellFactory(view -> new MovieCell(addToWatchlistHandler, true));
 
         genreComboBox.getItems().addAll(getAllGenres());
         releaseYearComboBox.getItems().addAll(getAllReleaseYears());
@@ -90,30 +97,44 @@ public class HomeController implements Initializable {
 
         searchField.setOnAction(e -> triggerSearch());
         searchBtn.setOnAction(e -> triggerSearch());
+
+        // Button-Handler mit StatePattern angepasst
         sortBtn.setOnAction(e -> {
-            ascending = !ascending;
-            sortMovies(ascending);
-            sortBtn.setText(ascending ? "Sort (asc)" : "Sort (desc)");
+            if (isAscending) {
+                sortContext.setState(new AscSortState());
+                sortBtn.setText("Sort (asc)");
+            } else {
+                sortContext.setState(new DescSortState());
+                sortBtn.setText("Sort (desc)");
+            }
+            isAscending = !isAscending;
+            sortContext.applySort(observableMovies);
         });
+
         clearBtn.setOnAction(e -> {
             searchField.clear();
             genreComboBox.getSelectionModel().clearSelection();
             releaseYearComboBox.getSelectionModel().clearSelection();
             ratingComboBox.getSelectionModel().clearSelection();
             refreshMovies();
-            sortMovies(ascending);
+            sortContext.applySort(observableMovies);
             clearBtn.setVisible(false);
         });
+    }
+
+    @Override
+    public void update(String message) {
+        showAlert(Alert.AlertType.INFORMATION, "Watchlist", message);
     }
 
     private List<Movie> loadMoviesWithCache() {
         try {
             List<Movie> fresh = MovieAPI.getMovies(null, null, null, null);
-            new MovieRepository().addAllMovies(fresh);
+            MovieRepository.getInstance().addAllMovies(fresh);
             return fresh;
         } catch (MovieApiException | DatabaseException e) {
             List<Movie> cached = MovieEntity.toMovies(
-                    new MovieRepository().getAllMovies());
+                    MovieRepository.getInstance().getAllMovies());
             if (cached.isEmpty()) {
                 throw e;
             }
@@ -133,7 +154,7 @@ public class HomeController implements Initializable {
         try {
             List<Movie> fromApi = MovieAPI.getMovies(searchText, genre, releaseYear, ratingFrom);
             observableMovies.setAll(fromApi);
-            sortMovies(ascending);
+            sortContext.applySort(observableMovies);
         } catch (MovieApiException e) {
             showAlert(Alert.AlertType.WARNING,
                     "Suche fehlgeschlagen",
@@ -156,14 +177,9 @@ public class HomeController implements Initializable {
         observableMovies.setAll(filtered);
     }
 
-    public void sortMovies(boolean ascending) {
-        if (observableMovies.isEmpty()) return;
-        if (ascending) FXCollections.sort(observableMovies);
-        else FXCollections.sort(observableMovies, Comparator.reverseOrder());
-    }
-
     public void refreshMovies() {
         observableMovies.setAll(allMovies);
+        sortContext.applySort(observableMovies);
     }
 
     public List<Movie> getShownMovies() {

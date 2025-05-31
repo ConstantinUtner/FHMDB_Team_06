@@ -2,22 +2,53 @@ package at.ac.fhcampuswien.fhmdb.database;
 
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.observer.Observer;
+import at.ac.fhcampuswien.fhmdb.observer.Observable;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class WatchlistRepository {
+public class WatchlistRepository implements Observable {
 
+    private static WatchlistRepository instance;
     private final Dao<WatchlistMovieEntity, Long> dao;
+    private final List<Observer> observers = new ArrayList<>();
 
     // Konstruktor – holt das DAO vom DatabaseManager
-    public WatchlistRepository() throws DatabaseException{
+    private WatchlistRepository() throws DatabaseException{
         try {
             this.dao = DatabaseManager.getWatchlistDao();
         } catch (SQLException e) {
             throw new DatabaseException("WatchlistRepository: DAO für Watchlist konnte nicht initialisiert werden. " +
                     "Bitte prüfe die Datenbankverbindung und ORMLite-Konfiguration.", e);
+        }
+    }
+
+    public static WatchlistRepository getInstance() throws DatabaseException {
+        if (instance == null) {
+            instance = new WatchlistRepository();
+        }
+        return instance;
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String message) {
+        for (Observer observer : observers) {
+            observer.update(message);
         }
     }
 
@@ -40,8 +71,10 @@ public class WatchlistRepository {
                     .queryForFirst();
             if (existing == null) {
                 dao.create(new WatchlistMovieEntity(movie.getId()));
+                notifyObservers("Movie successfully added to watchlist");
                 return true;
             }
+            notifyObservers("Movie already on watchlist");
             return false;
         } catch (SQLException e) {
             throw new DatabaseException("WatchlistRepository: Fehler beim Hinzufügen des Films '" + movie.getTitle() +
